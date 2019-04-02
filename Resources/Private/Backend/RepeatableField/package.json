@@ -1,0 +1,25 @@
+{
+  "description": "Repeatable Field",
+  "license": "GNU GPLv3",
+  "private": true,
+  "scripts": {
+    "build": "neos-react-scripts build",
+    "watch": "neos-react-scripts watch"
+  },
+  "devDependencies": {
+    "@neos-project/neos-ui-extensibility": "~1.0.8"
+  },
+  "neos": {
+    "buildTargetDirectory": "../../../Public/Inspector/RepeatableFieldEditor"
+  },
+  "dependencies": {
+    "@friendsofreactjs/react-css-themr": "^3.3.2",
+    "@neos-project/react-ui-components": "^1.3.3",
+    "array-move": "^2.0.0",
+    "lodash.omit": "^4.5.0",
+    "lodash.unescape": "^4.0.1",
+    "lodash.upperfirst": "^4.3.1",
+    "react-sortable-hoc": "^1.8.3",
+    "webpack": "3.11.0"
+  }
+}
