@@ -11,8 +11,8 @@ Neos:
             editor: Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor
         editors:
           Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor:
-#            editorOptions:
-#              buttonLabel: 'Neos.Neos:Main:content.inspector.editors.codeEditor.editCode'
+            editorOptions:
+              buttonLabel: 'Neos.Neos:Main:content.inspector.editors.codeEditor.editCode'
     Ui:
       resources:
         javascript:
