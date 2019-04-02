@@ -1,0 +1,20 @@
+Neos:
+  Neos:
+    userInterface:
+      translation:
+        autoInclude:
+          'Mireo.RepeatableFields': ['NodeTypes/*']
+      inspector:
+        dataTypes:
+          repeatable:
+            typeConverter: Neos\Flow\Property\TypeConverter\ArrayConverter
+            editor: Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor
+        editors:
+          Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor:
+#            editorOptions:
+#              buttonLabel: 'Neos.Neos:Main:content.inspector.editors.codeEditor.editCode'
+    Ui:
+      resources:
+        javascript:
+          'Mireo.RepeatableFields:RepeatableField':
+            resource: resource://Mireo.RepeatableFields/Public/Inspector/RepeatableFieldEditor/Plugin.js

@@ -1,0 +1,18 @@
+{
+    "description": "",
+    "type": "neos-plugin",
+    "name": "mireo91/repeatablefields",
+    "require": {
+        "neos/flow": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mireo\\RepeatableFields\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Mireo.RepeatableFields"
+        }
+    }
+}
