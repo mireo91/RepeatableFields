@@ -1,5 +1,5 @@
 # RepeatableFields
-Neos package for adding neos-ui repeatables fields
+Neos package for adding repeatables fields to neos-ui react
 
 ## Demo View
 ![](repeatable.gif)
