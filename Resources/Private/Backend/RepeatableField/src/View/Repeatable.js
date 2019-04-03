@@ -90,7 +90,7 @@ export default class RepeatableField extends PureComponent {
                 return;
             var length = json.length;
             var values = [];
-            var currentValues = this.props.value?JSON.parse(this.props.value):[];
+            var currentValues = this.getValue();
             for( var i=0; i<length; i++){
                 var fieldsArray = Object.keys(this.props.options.fields);
                 values[i] = {};
@@ -112,7 +112,7 @@ export default class RepeatableField extends PureComponent {
 
     getValue(){
         const {value} = this.props;
-        return value?JSON.parse(value):[];
+        return value?value:[];
     }
 
     getEmptyValue = () => {
@@ -129,7 +129,7 @@ export default class RepeatableField extends PureComponent {
     }
 
     handleValueChange(value) {
-        this.props.commit(JSON.stringify(value));
+        this.props.commit(value);
     };
 
     handleAdd = () => {
