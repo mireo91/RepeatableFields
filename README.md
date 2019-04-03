@@ -4,6 +4,10 @@ Neos package for adding neos-ui repeatables fields
 ## Demo View
 ![](repeatable.gif)
 
+## Instalation
+
+`composer require mireo91/repeatablefields`
+
 ## Configuration
 Create property with type `reapeatable`.
 
