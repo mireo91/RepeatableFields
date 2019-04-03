@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import style from '../style.css';
 import {neos} from '@neos-project/neos-ui-decorators';
@@ -12,6 +12,19 @@ import {
 } from 'react-sortable-hoc';
 import backend from '@neos-project/neos-ui-backend-connector';
 import arrayMove from 'array-move'
+
+
+const SortableItem = sortableElement(({value}) => (
+    <div>
+        {value}
+    </div>
+));
+
+const SortableContainer = sortableContainer(({children}) => {
+    return (
+        <div>{children}</div>
+    )
+});
 
 const defaultOptions = {
     autoFocus: false,
@@ -153,7 +166,7 @@ export default class RepeatableField extends PureComponent {
             // console.log(this.props);
 
             return (
-                    <div>
+                    <Fragment>
                         {field.label?<label>{field.label}</label>:''}
                         <EditorComponent
                             id={`repetable-${idx}-${identifier}`}
@@ -172,7 +185,7 @@ export default class RepeatableField extends PureComponent {
                             // validatorRegistry = {this.props.validatorRegistry}
                             {...field}
                         />
-                    </div>
+                    </Fragment>
 
                     // {...restProps} />
                 );
@@ -206,18 +219,8 @@ export default class RepeatableField extends PureComponent {
     render() {
         const {options} = this;
 
-        const SortableItem = sortableElement(({value}) => (
-            <div>
-                {value}
-            </div>
-        ));
-
-        const SortableContainer = sortableContainer(({children}) => {
-            return <div>{children}</div>;
-        });
-
         return (
-            <div>
+            <Fragment>
                 <SortableContainer onSortEnd={this.onSortEnd} useDragHandle>
                 {this.getValue().map((fields, idx) => (
                     // this.repetableWrapper(idx)
@@ -226,7 +229,7 @@ export default class RepeatableField extends PureComponent {
                 )}
                 </SortableContainer>
                 {options.controls.add?(<button type="button" onClick={() => this.handleAdd()} className={style.btn}>{options.buttonAddLabel}</button>):''}
-            </div>
+            </Fragment>
         )
     }
 }

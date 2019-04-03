@@ -320,6 +320,25 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var SortableItem = (0, _reactSortableHoc.sortableElement)(function (_ref) {
+    var value = _ref.value;
+    return _react2.default.createElement(
+        'div',
+        null,
+        value
+    );
+});
+
+var SortableContainer = (0, _reactSortableHoc.sortableContainer)(function (_ref2) {
+    var children = _ref2.children;
+
+    return _react2.default.createElement(
+        'div',
+        null,
+        children
+    );
+});
+
 var defaultOptions = {
     autoFocus: false,
     disabled: false,
@@ -418,9 +437,9 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             );
         };
 
-        _this.onSortEnd = function (_ref) {
-            var oldIndex = _ref.oldIndex,
-                newIndex = _ref.newIndex;
+        _this.onSortEnd = function (_ref3) {
+            var oldIndex = _ref3.oldIndex,
+                newIndex = _ref3.newIndex;
 
             _this.handleValueChange((0, _arrayMove2.default)(_this.getValue(), oldIndex, newIndex));
         };
@@ -432,7 +451,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
     _createClass(RepeatableField, [{
         key: 'getFromEndpoint',
         value: function () {
-            var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+            var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
                 var _this2 = this;
 
                 var params, dataSource;
@@ -482,7 +501,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             }));
 
             function getFromEndpoint() {
-                return _ref2.apply(this, arguments);
+                return _ref4.apply(this, arguments);
             }
 
             return getFromEndpoint;
@@ -528,7 +547,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                 // console.log(this.props);
 
                 return _react2.default.createElement(
-                    'div',
+                    _react.Fragment,
                     null,
                     field.label ? _react2.default.createElement(
                         'label',
@@ -572,27 +591,8 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             var options = this.options;
 
 
-            var SortableItem = (0, _reactSortableHoc.sortableElement)(function (_ref3) {
-                var value = _ref3.value;
-                return _react2.default.createElement(
-                    'div',
-                    null,
-                    value
-                );
-            });
-
-            var SortableContainer = (0, _reactSortableHoc.sortableContainer)(function (_ref4) {
-                var children = _ref4.children;
-
-                return _react2.default.createElement(
-                    'div',
-                    null,
-                    children
-                );
-            });
-
             return _react2.default.createElement(
-                'div',
+                _react.Fragment,
                 null,
                 _react2.default.createElement(
                     SortableContainer,
