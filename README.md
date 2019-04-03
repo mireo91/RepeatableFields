@@ -19,8 +19,8 @@ Create property with type `reapeatable`.
           editorOptions:
             buttonAddLabel: 'Add row' #default lable
             controls:  #default all set to true
-              move: true,
-              remove: true,
+              move: true
+              remove: true
               add: true
             fields:
               filed0:
