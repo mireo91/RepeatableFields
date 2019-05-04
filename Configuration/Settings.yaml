@@ -7,7 +7,7 @@ Neos:
       inspector:
         dataTypes:
           repeatable:
-#            typeConverter: Neos\Flow\Property\TypeConverter\ArrayConverter
+            typeConverter: Mireo\RepeatableFields\TypeConverter\RepeatableConverter
             editor: Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor
         editors:
           Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor:

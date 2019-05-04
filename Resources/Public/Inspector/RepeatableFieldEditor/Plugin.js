@@ -366,8 +366,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             if (_this.empytValue) return _this.empytValue;
             var options = _this.props.options;
 
-            var fields = options.fields;
-            var length = fields.length;
+            var fields = options.properties;
             _this.empytValue = {};
             Object.keys(fields).map(function (value) {
                 _this.empytValue[value] = '';
@@ -408,7 +407,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                 _react2.default.createElement(
                     'div',
                     { className: _style2.default['repeatable-field-wrapper'] },
-                    Object.keys(options.fields).map(function (identifier) {
+                    Object.keys(options.properties).map(function (identifier) {
                         return _this.getEditorDefinition(idx, identifier);
                     })
                 ),
@@ -463,7 +462,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                                     var values = [];
                                     var currentValues = _this2.getValue();
                                     for (var i = 0; i < length; i++) {
-                                        var fieldsArray = Object.keys(_this2.props.options.fields);
+                                        var fieldsArray = Object.keys(_this2.props.options.properties);
                                         values[i] = {};
                                         fieldsArray.map(function (identifier, idx) {
                                             var valueIdentifier = (0, _plowJs.$get)('options.endpointData.parseValues.' + identifier, _this2.props);
@@ -496,6 +495,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
         value: function getValue() {
             var value = this.props.value;
 
+            console.log(value);
             return value ? value : [];
         }
     }, {
@@ -514,7 +514,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
 
             var fields = this.getValue();
 
-            var field = (0, _plowJs.$get)('fields.' + identifier, options);
+            var field = (0, _plowJs.$get)('properties.' + identifier, options);
 
             var commitChange = function commitChange(event) {
                 var value = _this3.getValue();
@@ -602,7 +602,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
 
     return RepeatableField;
 }(_react.PureComponent), _class2.propTypes = {
-    value: _propTypes2.default.arrayOf(_propTypes2.default.object),
+    value: _propTypes2.default.object,
     commit: _propTypes2.default.func.isRequired,
     validationErrors: _propTypes2.default.array,
     highlight: _propTypes2.default.bool,

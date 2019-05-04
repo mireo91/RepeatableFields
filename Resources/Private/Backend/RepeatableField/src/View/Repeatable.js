@@ -46,7 +46,7 @@ const defaultOptions = {
 
 export default class RepeatableField extends PureComponent {
     static propTypes = {
-        value: PropTypes.arrayOf( PropTypes.object ),
+        value: PropTypes.object,
         commit: PropTypes.func.isRequired,
         validationErrors: PropTypes.array,
         highlight: PropTypes.bool,
@@ -92,7 +92,7 @@ export default class RepeatableField extends PureComponent {
             var values = [];
             var currentValues = this.getValue();
             for( var i=0; i<length; i++){
-                var fieldsArray = Object.keys(this.props.options.fields);
+                var fieldsArray = Object.keys(this.props.options.properties);
                 values[i] = {};
                 fieldsArray.map((identifier, idx) => {
                     var valueIdentifier = $get(`options.endpointData.parseValues.${identifier}`, this.props);
@@ -112,6 +112,7 @@ export default class RepeatableField extends PureComponent {
 
     getValue(){
         const {value} = this.props;
+        console.log(value);
         return value?value:[];
     }
 
@@ -119,8 +120,7 @@ export default class RepeatableField extends PureComponent {
         if( this.empytValue )
             return this.empytValue;
         const {options} = this.props;
-        var fields = options.fields;
-        const length = fields.length;
+        var fields = options.properties;
         this.empytValue = {};
         Object.keys(fields).map((value => {
             this.empytValue[value] = '';
@@ -148,7 +148,7 @@ export default class RepeatableField extends PureComponent {
         const {editorRegistry, options} = this.props;
         const fields = this.getValue();
 
-        const field = $get('fields.'+identifier, options);
+        const field = $get('properties.'+identifier, options);
 
         const commitChange = (event) =>{
             var value = this.getValue();
@@ -203,7 +203,7 @@ export default class RepeatableField extends PureComponent {
             <div className={style['repeatable-wrapper']}>
                 {options.controls.move && this.getValue().length>1?(<DragHandle />):''}
                 <div className={style['repeatable-field-wrapper']}>
-                    {Object.keys(options.fields).map( (identifier) => {
+                    {Object.keys(options.properties).map( (identifier) => {
                         return this.getEditorDefinition(idx, identifier)
                     })}
                 </div>

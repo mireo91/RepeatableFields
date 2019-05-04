@@ -26,11 +26,12 @@ Create property with type `reapeatable`.
               move: true
               remove: true
               add: true
-            fields:
+            properties:
               filed0:
                 editorOptions:
                   placeholder: 'default field editor'
               field1:
+              	type: Neos\Media\Domain\Model\ImageInterface #type for property mapper
                 editory: 'Neos.Neos/Inspector/Editors/ImageEditor'
                 editorOptions:
                   label: 'Image field'
@@ -42,7 +43,12 @@ Create property with type `reapeatable`.
                   placeholder: 'test placeholder 2'
 ```
 
-##Issues
+## Nested
+
+In fusion you can get data by path  `q(node).property('repetableProperty.field1')` so you get nested data form specific repeatable field
+
+## Issues
 
 - early version
 - not all fields are working properly - but most of them should
+- image variant not working
