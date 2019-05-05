@@ -112,7 +112,7 @@ export default class RepeatableField extends PureComponent {
 
     getValue(){
         const {value} = this.props;
-        console.log(value);
+        // console.log(value);
         return value?value:[];
     }
 
