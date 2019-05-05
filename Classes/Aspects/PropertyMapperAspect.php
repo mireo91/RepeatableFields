@@ -1,6 +1,7 @@
 <?php
 namespace Mireo\RepeatableFields\Aspects;
 
+use Mireo\RepeatableFields\Model\Repeatable;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -8,6 +9,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
+use Neos\Neos\Domain\Service\ContentContext;
 
 /**
  * The central security aspect, that invokes the security interceptors.
@@ -39,21 +41,32 @@ class PropertyMapperAspect
         /** @var NodeType $nodeType */
         $nodeType = $node->getNodeType();
 
-        if ($nodeType !== null) {
-            $expectedPropertyType = $nodeType->getPropertyType($propertyName);
-        }
+        $explodedPropertyName = explode('.', $propertyName);
 
-        if( $expectedPropertyType == 'repeatable' ){
-            $value = $node->getNodeData()->getProperty($propertyName);
-            $configuration = new PropertyMappingConfiguration();
-            $fields = $nodeType->getConfiguration("properties.$propertyName.ui.inspector.editorOptions.properties");
-            foreach ($fields as $field => $option) {
-                $configuration->setTypeConverterOption('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', $field, $option);
+        if( $explodedPropertyName ) {
+
+            if ($nodeType !== null) {
+                $expectedPropertyType = $nodeType->getPropertyType($explodedPropertyName[0]);
             }
 
-            return $this->propertyMapper->convert($value, $expectedPropertyType, $configuration);
-        }
+            if ($expectedPropertyType == 'repeatable') {
+                $value = $node->getNodeData()->getProperty($explodedPropertyName[0]);
+                $configuration = new PropertyMappingConfiguration();
+                $fields = $nodeType->getConfiguration("properties.${explodedPropertyName[0]}.ui.inspector.editorOptions.properties");
+                foreach ($fields as $field => $option) {
+                    $configuration->setTypeConverterOption('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', $field, $option);
+                }
 
+                /** @var Repeatable $value */
+                $value = $this->propertyMapper->convert($value, $expectedPropertyType, $configuration);
+
+                if (isset($explodedPropertyName[1])) {
+                    return $value->getByField($explodedPropertyName[1]);
+                }else{
+                    return $value;
+                }
+            }
+        }
         return $joinPoint->getAdviceChain()->proceed($joinPoint);
     }
 
@@ -74,36 +87,5 @@ class PropertyMapperAspect
             $targetType = 'Mireo\RepeatableFields\Model\Repeatable';
             $joinPoint->setMethodArgument('targetType', $targetType);
         }
-    }
-
-    /**
-     * In Fusion allow to get fields in specific path for repeatable. Like
-     *
-     * @Flow\Around("method(Neos\ContentRepository\Eel\FlowQueryOperations\PropertyOperation->evaluate())")
-     * @param JoinPointInterface $joinPoint The current joinpoint
-     * @throws
-     * @return mixed The result of the target method if it has not been intercepted
-     */
-    public function PropertyOperation(JoinPointInterface $joinPoint){
-        $arguments = $joinPoint->getMethodArgument('arguments');
-        $flowQuery = $joinPoint->getMethodArgument('flowQuery');
-        if( isset($arguments[0]) ) {
-            $explodedPath = explode('.', $arguments[0]);
-
-            $context = $flowQuery->getContext();
-            /** @var NodeInterface $element */
-            $element = $context[0];
-
-            $options = $element->getNodeType()->getConfiguration("properties.${explodedPath[0]}");
-
-            if (isset($options['type']) && $options['type'] == 'repeatable') {
-                if (count($explodedPath) > 1)
-                    return $element->getProperty($explodedPath[0])->getByField($explodedPath[1]);
-                return $element->getProperty($explodedPath[0])->getByGroups();
-            }
-        }
-
-        return $joinPoint->getAdviceChain()->proceed($joinPoint);
-
     }
 }
