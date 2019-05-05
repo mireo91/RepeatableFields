@@ -51,4 +51,3 @@ In fusion you can get data by path  `q(node).property('repetableProperty.field1'
 
 - early version
 - not all fields are working properly - but most of them should
-- image variant not working
