@@ -262,6 +262,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _dec, _class, _class2, _temp;
+// import {actions} from '@neos-project/neos-ui-redux-store';
+// import {connect} from 'react-redux';
+
 
 var _react = __webpack_require__(1);
 
@@ -278,10 +281,6 @@ var _style2 = _interopRequireDefault(_style);
 var _neosUiDecorators = __webpack_require__(15);
 
 var _plowJs = __webpack_require__(16);
-
-var _neosUiReduxStore = __webpack_require__(17);
-
-var _reactRedux = __webpack_require__(18);
 
 var _reactSortableHoc = __webpack_require__(19);
 
@@ -360,6 +359,10 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             _this.options = Object.assign({}, defaultOptions, options);
             // this.handleValueChange(value);
             _this.getFromEndpoint();
+
+            _neosUiBackendConnector2.default.get().endpoints.dataSource('get-property-types', null, {}).then(function (json) {
+                _this.dataTypes = json;
+            });
         };
 
         _this.getEmptyValue = function () {
@@ -494,8 +497,8 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
         key: 'getValue',
         value: function getValue() {
             var value = this.props.value;
+            // console.log(value);
 
-            console.log(value);
             return value ? value : [];
         }
     }, {
@@ -514,11 +517,47 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
 
             var fields = this.getValue();
 
-            var field = (0, _plowJs.$get)('properties.' + identifier, options);
+            var fieldData = (0, _plowJs.$get)('properties.' + identifier, options);
 
-            var commitChange = function commitChange(event) {
+            var createImageVariant = _neosUiBackendConnector2.default.get().endpoints.createImageVariant;
+
+            var field = fieldData;
+            if (fieldData.type && this.dataTypes) {
+                field = (0, _plowJs.$merge)(field.type, field, this.dataTypes)[fieldData.type];
+            }
+
+            // console.log(field);
+            var commitChange = function commitChange(event, hook) {
                 var value = _this3.getValue();
+
                 value[idx][identifier] = event;
+
+                if (hook) {
+                    if (hook['Neos.UI:Hook.BeforeSave.CreateImageVariant']) {
+                        var _hook$NeosUIHookBe = hook['Neos.UI:Hook.BeforeSave.CreateImageVariant'].object,
+                            __identity = _hook$NeosUIHookBe.__identity,
+                            adjustments = _hook$NeosUIHookBe.adjustments,
+                            originalAsset = _hook$NeosUIHookBe.originalAsset;
+
+
+                        var uuidOfImage = originalAsset ? originalAsset.__identity : __identity;
+                        if (!uuidOfImage) {
+                            return Promise.reject(new Error('Received malformed originalImageUuid.'));
+                        }
+
+                        if (!adjustments) {
+                            return Promise.reject(new Error('Received malformed adjustments.'));
+                        }
+
+                        createImageVariant(uuidOfImage, adjustments).then(function (json) {
+                            console.log(json);
+                            value[idx][identifier] = { '__identity': json.__identity };
+                            _this3.handleValueChange(value);
+                        });
+                        return;
+                    }
+                }
+
                 _this3.handleValueChange(value);
             };
 
@@ -554,6 +593,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                         // nodeTypesRegistry = {this.props.nodeTypesRegistry}
                         // i18nRegistry = {this.props.i18nRegistry}
                         // validatorRegistry = {this.props.validatorRegistry}
+                        // hooks={hooks.bind(this)}
                     }, field))
                 )
 
@@ -610,7 +650,8 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
     onKeyPress: _propTypes2.default.func,
     onEnterKey: _propTypes2.default.func,
     id: _propTypes2.default.string,
-    i18nRegistry: _propTypes2.default.object.isRequired
+    i18nRegistry: _propTypes2.default.object.isRequired,
+    neos: _propTypes2.default.object
 }, _temp)) || _class);
 exports.default = RepeatableField;
 
@@ -1246,36 +1287,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 module.exports = (0, _readFromConsumerApi2.default)('vendor')().plow;
 
 /***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _readFromConsumerApi = __webpack_require__(0);
-
-var _readFromConsumerApi2 = _interopRequireDefault(_readFromConsumerApi);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = (0, _readFromConsumerApi2.default)('NeosProjectPackages')().NeosUiReduxStore;
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _readFromConsumerApi = __webpack_require__(0);
-
-var _readFromConsumerApi2 = _interopRequireDefault(_readFromConsumerApi);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = (0, _readFromConsumerApi2.default)('vendor')().reactRedux;
-
-/***/ }),
+/* 17 */,
+/* 18 */,
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 

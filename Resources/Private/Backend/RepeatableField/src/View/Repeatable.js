@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import style from '../style.css';
 import {neos} from '@neos-project/neos-ui-decorators';
 import {$get, $set, $transform, $merge} from 'plow-js';
-import {actions} from '@neos-project/neos-ui-redux-store';
-import {connect} from 'react-redux';
+// import {actions} from '@neos-project/neos-ui-redux-store';
+// import {connect} from 'react-redux';
 import {
     sortableContainer,
     sortableElement,
@@ -45,6 +45,7 @@ const defaultOptions = {
 }))
 
 export default class RepeatableField extends PureComponent {
+
     static propTypes = {
         value: PropTypes.object,
         commit: PropTypes.func.isRequired,
@@ -54,7 +55,8 @@ export default class RepeatableField extends PureComponent {
         onKeyPress: PropTypes.func,
         onEnterKey: PropTypes.func,
         id: PropTypes.string,
-        i18nRegistry: PropTypes.object.isRequired
+        i18nRegistry: PropTypes.object.isRequired,
+        neos: PropTypes.object
     };
 
     constructor(props) {
@@ -71,7 +73,12 @@ export default class RepeatableField extends PureComponent {
         this.options = Object.assign({}, defaultOptions, options);
         // this.handleValueChange(value);
         this.getFromEndpoint();
-    }
+
+        backend.get().endpoints.dataSource('get-property-types', null, {}).then( (json) => {
+            this.dataTypes = json;
+        });
+
+    };
 
     async getFromEndpoint(){
         if( !$get('options.endpointData.url', this.props) && !$get('options.endpointData.dataSourceIdentifier', this.props) )
@@ -148,11 +155,42 @@ export default class RepeatableField extends PureComponent {
         const {editorRegistry, options} = this.props;
         const fields = this.getValue();
 
-        const field = $get('properties.'+identifier, options);
+        const fieldData = $get('properties.'+identifier, options);
 
-        const commitChange = (event) =>{
+        const {createImageVariant} = backend.get().endpoints;
+
+        var field = fieldData;
+        if( fieldData.type && this.dataTypes){
+            field = $merge(field.type, field, this.dataTypes)[fieldData.type];
+        }
+
+        // console.log(field);
+        const commitChange = (event, hook) =>{
             var value = this.getValue();
+
             value[idx][identifier] = event;
+
+            if( hook ){
+                if( hook['Neos.UI:Hook.BeforeSave.CreateImageVariant'] ){
+                    const {__identity, adjustments, originalAsset} = hook['Neos.UI:Hook.BeforeSave.CreateImageVariant'].object;
+
+                    const uuidOfImage = originalAsset ? originalAsset.__identity : __identity;
+                    if (!uuidOfImage) {
+                        return Promise.reject(new Error('Received malformed originalImageUuid.'));
+                    }
+
+                    if (!adjustments) {
+                        return Promise.reject(new Error('Received malformed adjustments.'));
+                    }
+
+                    createImageVariant(uuidOfImage, adjustments).then((json) => {
+                        value[idx][identifier] = {'__identity': json.__identity};
+                        this.handleValueChange(value);
+                    });
+                    return;
+                }
+            }
+
             this.handleValueChange(value);
         };
 
@@ -183,6 +221,7 @@ export default class RepeatableField extends PureComponent {
                             // nodeTypesRegistry = {this.props.nodeTypesRegistry}
                             // i18nRegistry = {this.props.i18nRegistry}
                             // validatorRegistry = {this.props.validatorRegistry}
+                            // hooks={hooks.bind(this)}
                             {...field}
                         />
                     </Fragment>
