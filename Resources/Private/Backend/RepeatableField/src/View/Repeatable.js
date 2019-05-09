@@ -13,6 +13,8 @@ import {
 import backend from '@neos-project/neos-ui-backend-connector';
 import arrayMove from 'array-move'
 
+const NeosUiEditors = window['@Neos:HostPluginAPI']['@NeosProjectPackages']().NeosUiEditors;
+
 
 const SortableItem = sortableElement(({value}) => (
     <div>
@@ -149,6 +151,43 @@ export default class RepeatableField extends PureComponent {
     handleRemove = (idx) => {
         var value = this.getValue().filter((s, sidx) => idx !== sidx);
         this.handleValueChange(value);
+    };
+
+    validateElement = (elementValue, elementConfiguration, idx, identifier) => {
+        if (elementConfiguration && elementConfiguration.validation) {
+            const validators = elementConfiguration.validation;
+            const validationResults = Object.keys(validators).map(validatorName => {
+                const validatorConfiguration = validators[validatorName];
+                return this.checkValidator(elementValue, validatorName, validatorConfiguration);
+            });
+            // const id = idx+'_'+identifier;
+            // if( validationResults.length > 0 && validationResults[0] != null){
+            //     if( !this.state.validationErrors[id] ){
+            //         this.state.validationErrors = $set(id, []);
+            //     }
+            //     console.log(this.state, id, validationResults);
+            //     const newState = $merge('validationErrors.'+id, validationResults, this.state);
+            //     console.log(newState);
+            //     this.setState(newState);
+            // }else{
+            //     if( this.state.validationErrors.id )
+            //         delete this.state.validationErrors.id;
+            // }
+            return validationResults.filter(result => result);
+        }
+    };
+
+    checkValidator = (elementValue, validatorName, validatorConfiguration) => {
+        const validator = this.props.validatorRegistry.get(validatorName);
+        if (validator) {
+            return validator(elementValue, validatorConfiguration);
+        }
+        console.warn(`Validator ${validatorName} not found`);
+    };
+
+    isInvalid() {
+        const {validationErrors} = this.props;
+        return validationErrors && validationErrors.length > 0;
     }
 
     getEditorDefinition( idx, identifier ) {
@@ -194,43 +233,24 @@ export default class RepeatableField extends PureComponent {
             this.handleValueChange(value);
         };
 
-        const editorDefinition = editorRegistry.get(field.editor?field.editor:'Neos.Neos/Inspector/Editors/TextFieldEditor');
+        const editorOptions = field.editorOptions;
+        const propertyValue = fields[idx][identifier];
 
-        if (editorDefinition && editorDefinition.component) {
-            var EditorComponent = editorDefinition && editorDefinition.component;
-            const editorOptions = field.editorOptions;
-            const propertyValue = fields[idx][identifier];
-
-            // console.log(this.props);
-
-            return (
-                    <Fragment>
-                        {field.label?<label>{field.label}</label>:''}
-                        <EditorComponent
-                            id={`repetable-${idx}-${identifier}`}
-                            name={`[${idx}]${identifier}`}
-                            commit={commitChange.bind(this)}
-                            // onChange={commitChange()}
-                            // onchange={commitChange()}
-                            // onChangeValue={commitChange()}
-                            value={propertyValue}
-                            options = {editorOptions?editorOptions:[]}
-                            neos = {this.props.neos}
-                            // editorRegistry = {this.props.editorRegistry}
-                            renderSecondaryInspector = {this.props.renderSecondaryInspector}
-                            // nodeTypesRegistry = {this.props.nodeTypesRegistry}
-                            // i18nRegistry = {this.props.i18nRegistry}
-                            // validatorRegistry = {this.props.validatorRegistry}
-                            // hooks={hooks.bind(this)}
-                            {...field}
-                        />
-                    </Fragment>
-
-                    // {...restProps} />
-                );
-        }
-
-        return (<div className={style['envelope--invalid']}>Missing Editor {'error'}</div>);
+        return (
+            <NeosUiEditors
+                label={field.label?field.label:''}
+                editor={field.editor?field.editor:'Neos.Neos/Inspector/Editors/TextFieldEditor'}
+                identifier={`repetable-${idx}-${identifier}`}
+                name={`[${idx}]${identifier}`}
+                commit={commitChange.bind(this)}
+                value={propertyValue}
+                options = {editorOptions?editorOptions:[]}
+                validationErrors={this.validateElement(propertyValue, field, idx, identifier)}
+                editorRegistry = {this.props.editorRegistry}
+                i18nRegistry={this.props.i18nRegistry}
+                renderSecondaryInspector = {this.props.renderSecondaryInspector}
+            />
+        );
     }
 
     repetableWrapper = (idx) => {

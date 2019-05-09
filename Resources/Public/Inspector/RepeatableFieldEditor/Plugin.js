@@ -257,8 +257,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _dec, _class, _class2, _temp;
@@ -282,13 +280,13 @@ var _neosUiDecorators = __webpack_require__(15);
 
 var _plowJs = __webpack_require__(16);
 
-var _reactSortableHoc = __webpack_require__(19);
+var _reactSortableHoc = __webpack_require__(17);
 
-var _neosUiBackendConnector = __webpack_require__(21);
+var _neosUiBackendConnector = __webpack_require__(19);
 
 var _neosUiBackendConnector2 = _interopRequireDefault(_neosUiBackendConnector);
 
-var _arrayMove = __webpack_require__(22);
+var _arrayMove = __webpack_require__(20);
 
 var _arrayMove2 = _interopRequireDefault(_arrayMove);
 
@@ -303,6 +301,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var NeosUiEditors = window['@Neos:HostPluginAPI']['@NeosProjectPackages']().NeosUiEditors;
 
 var SortableItem = (0, _reactSortableHoc.sortableElement)(function (_ref) {
     var value = _ref.value;
@@ -389,6 +389,40 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                 return idx !== sidx;
             });
             _this.handleValueChange(value);
+        };
+
+        _this.validateElement = function (elementValue, elementConfiguration, idx, identifier) {
+            if (elementConfiguration && elementConfiguration.validation) {
+                var validators = elementConfiguration.validation;
+                var validationResults = Object.keys(validators).map(function (validatorName) {
+                    var validatorConfiguration = validators[validatorName];
+                    return _this.checkValidator(elementValue, validatorName, validatorConfiguration);
+                });
+                // const id = idx+'_'+identifier;
+                // if( validationResults.length > 0 && validationResults[0] != null){
+                //     if( !this.state.validationErrors[id] ){
+                //         this.state.validationErrors = $set(id, []);
+                //     }
+                //     console.log(this.state, id, validationResults);
+                //     const newState = $merge('validationErrors.'+id, validationResults, this.state);
+                //     console.log(newState);
+                //     this.setState(newState);
+                // }else{
+                //     if( this.state.validationErrors.id )
+                //         delete this.state.validationErrors.id;
+                // }
+                return validationResults.filter(function (result) {
+                    return result;
+                });
+            }
+        };
+
+        _this.checkValidator = function (elementValue, validatorName, validatorConfiguration) {
+            var validator = _this.props.validatorRegistry.get(validatorName);
+            if (validator) {
+                return validator(elementValue, validatorConfiguration);
+            }
+            console.warn('Validator ' + validatorName + ' not found');
         };
 
         _this.repetableWrapper = function (idx) {
@@ -507,6 +541,13 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             this.props.commit(value);
         }
     }, {
+        key: 'isInvalid',
+        value: function isInvalid() {
+            var validationErrors = this.props.validationErrors;
+
+            return validationErrors && validationErrors.length > 0;
+        }
+    }, {
         key: 'getEditorDefinition',
         value: function getEditorDefinition(idx, identifier) {
             var _this3 = this;
@@ -550,7 +591,6 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                         }
 
                         createImageVariant(uuidOfImage, adjustments).then(function (json) {
-                            console.log(json);
                             value[idx][identifier] = { '__identity': json.__identity };
                             _this3.handleValueChange(value);
                         });
@@ -561,52 +601,22 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                 _this3.handleValueChange(value);
             };
 
-            var editorDefinition = editorRegistry.get(field.editor ? field.editor : 'Neos.Neos/Inspector/Editors/TextFieldEditor');
+            var editorOptions = field.editorOptions;
+            var propertyValue = fields[idx][identifier];
 
-            if (editorDefinition && editorDefinition.component) {
-                var EditorComponent = editorDefinition && editorDefinition.component;
-                var editorOptions = field.editorOptions;
-                var propertyValue = fields[idx][identifier];
-
-                // console.log(this.props);
-
-                return _react2.default.createElement(
-                    _react.Fragment,
-                    null,
-                    field.label ? _react2.default.createElement(
-                        'label',
-                        null,
-                        field.label
-                    ) : '',
-                    _react2.default.createElement(EditorComponent, _extends({
-                        id: 'repetable-' + idx + '-' + identifier,
-                        name: '[' + idx + ']' + identifier,
-                        commit: commitChange.bind(this)
-                        // onChange={commitChange()}
-                        // onchange={commitChange()}
-                        // onChangeValue={commitChange()}
-                        , value: propertyValue,
-                        options: editorOptions ? editorOptions : [],
-                        neos: this.props.neos
-                        // editorRegistry = {this.props.editorRegistry}
-                        , renderSecondaryInspector: this.props.renderSecondaryInspector
-                        // nodeTypesRegistry = {this.props.nodeTypesRegistry}
-                        // i18nRegistry = {this.props.i18nRegistry}
-                        // validatorRegistry = {this.props.validatorRegistry}
-                        // hooks={hooks.bind(this)}
-                    }, field))
-                )
-
-                // {...restProps} />
-                ;
-            }
-
-            return _react2.default.createElement(
-                'div',
-                { className: _style2.default['envelope--invalid'] },
-                'Missing Editor ',
-                'error'
-            );
+            return _react2.default.createElement(NeosUiEditors, {
+                label: field.label ? field.label : '',
+                editor: field.editor ? field.editor : 'Neos.Neos/Inspector/Editors/TextFieldEditor',
+                identifier: 'repetable-' + idx + '-' + identifier,
+                name: '[' + idx + ']' + identifier,
+                commit: commitChange.bind(this),
+                value: propertyValue,
+                options: editorOptions ? editorOptions : [],
+                validationErrors: this.validateElement(propertyValue, field, idx, identifier),
+                editorRegistry: this.props.editorRegistry,
+                i18nRegistry: this.props.i18nRegistry,
+                renderSecondaryInspector: this.props.renderSecondaryInspector
+            });
         }
     }, {
         key: 'render',
@@ -1287,13 +1297,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 module.exports = (0, _readFromConsumerApi2.default)('vendor')().plow;
 
 /***/ }),
-/* 17 */,
-/* 18 */,
-/* 19 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function (global, factory) {
-	 true ? factory(exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(20)) :
+	 true ? factory(exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(18)) :
 	typeof define === 'function' && define.amd ? define(['exports', 'react', 'prop-types', 'react-dom'], factory) :
 	(global = global || self, factory(global.SortableHOC = {}, global.React, global.PropTypes, global.ReactDOM));
 }(this, function (exports, React, PropTypes, reactDom) { 'use strict';
@@ -2819,7 +2827,7 @@ module.exports = (0, _readFromConsumerApi2.default)('vendor')().plow;
 
 
 /***/ }),
-/* 20 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2834,7 +2842,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 module.exports = (0, _readFromConsumerApi2.default)('vendor')().ReactDOM;
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2858,7 +2866,7 @@ var fetchWithErrorHandling = (0, _readFromConsumerApi2.default)('NeosProjectPack
 exports.fetchWithErrorHandling = fetchWithErrorHandling;
 
 /***/ }),
-/* 22 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
