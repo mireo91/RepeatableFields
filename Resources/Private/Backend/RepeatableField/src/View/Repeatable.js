@@ -64,9 +64,9 @@ export default class RepeatableField extends PureComponent {
     constructor(props) {
         super(props);
         // this.endpoint = false;
-        // this.state = {
-        //     fields: []
-        // };
+        this.state = {
+            validationErrors: {}
+        };
         this.init();
     }
 
@@ -160,19 +160,22 @@ export default class RepeatableField extends PureComponent {
                 const validatorConfiguration = validators[validatorName];
                 return this.checkValidator(elementValue, validatorName, validatorConfiguration);
             });
-            // const id = idx+'_'+identifier;
-            // if( validationResults.length > 0 && validationResults[0] != null){
-            //     if( !this.state.validationErrors[id] ){
-            //         this.state.validationErrors = $set(id, []);
-            //     }
-            //     console.log(this.state, id, validationResults);
-            //     const newState = $merge('validationErrors.'+id, validationResults, this.state);
-            //     console.log(newState);
-            //     this.setState(newState);
-            // }else{
-            //     if( this.state.validationErrors.id )
-            //         delete this.state.validationErrors.id;
-            // }
+            // console.log(idx+'_'+identifier, validationResults, elementValue, elementConfiguration);
+            const id = idx+'_'+identifier;
+            if( validationResults.length > 0 && validationResults[0] != null){
+                // if( !this.state.validationErrors[id] ){
+                    this.state.validationErrors[id] = validationResults;
+                // }
+                // console.log(this.state.validationErrors);
+                // const newState = this.state;
+                // this.setState(newState);
+                    this.props.validationErrors = validationResults;
+            }else{
+                if( this.state.validationErrors[id] )
+                    delete this.state.validationErrors[id];
+                if( !this.state.validationErrors )
+                    this.props.validationErrors = [];
+            }
             return validationResults.filter(result => result);
         }
     };
@@ -191,6 +194,7 @@ export default class RepeatableField extends PureComponent {
     }
 
     getEditorDefinition( idx, identifier ) {
+        const {dataTypes} = this;
         const {editorRegistry, options} = this.props;
         const fields = this.getValue();
 
@@ -199,13 +203,13 @@ export default class RepeatableField extends PureComponent {
         const {createImageVariant} = backend.get().endpoints;
 
         var field = fieldData;
-        if( fieldData.type && this.dataTypes){
-            field = $merge(field.type, field, this.dataTypes)[fieldData.type];
+        if( field.type && dataTypes && dataTypes[field.type]){
+            field = {...dataTypes[field.type], ...field};
         }
 
-        // console.log(field);
         const commitChange = (event, hook) =>{
             var value = this.getValue();
+            const id = idx+'_'+identifier;
 
             value[idx][identifier] = event;
 
@@ -240,7 +244,7 @@ export default class RepeatableField extends PureComponent {
             <NeosUiEditors
                 label={field.label?field.label:''}
                 editor={field.editor?field.editor:'Neos.Neos/Inspector/Editors/TextFieldEditor'}
-                identifier={`repetable-${idx}-${identifier}`}
+                identifier={`repeatable-${this.props.id}-${idx}-${identifier}`}
                 name={`[${idx}]${identifier}`}
                 commit={commitChange.bind(this)}
                 value={propertyValue}

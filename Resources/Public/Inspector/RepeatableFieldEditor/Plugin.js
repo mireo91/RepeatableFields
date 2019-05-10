@@ -257,6 +257,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _dec, _class, _class2, _temp;
@@ -348,9 +350,6 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
         _classCallCheck(this, RepeatableField);
 
         // this.endpoint = false;
-        // this.state = {
-        //     fields: []
-        // };
         var _this = _possibleConstructorReturn(this, (RepeatableField.__proto__ || Object.getPrototypeOf(RepeatableField)).call(this, props));
 
         _this.init = function () {
@@ -398,19 +397,20 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                     var validatorConfiguration = validators[validatorName];
                     return _this.checkValidator(elementValue, validatorName, validatorConfiguration);
                 });
-                // const id = idx+'_'+identifier;
-                // if( validationResults.length > 0 && validationResults[0] != null){
-                //     if( !this.state.validationErrors[id] ){
-                //         this.state.validationErrors = $set(id, []);
-                //     }
-                //     console.log(this.state, id, validationResults);
-                //     const newState = $merge('validationErrors.'+id, validationResults, this.state);
-                //     console.log(newState);
-                //     this.setState(newState);
-                // }else{
-                //     if( this.state.validationErrors.id )
-                //         delete this.state.validationErrors.id;
-                // }
+                // console.log(idx+'_'+identifier, validationResults, elementValue, elementConfiguration);
+                var id = idx + '_' + identifier;
+                if (validationResults.length > 0 && validationResults[0] != null) {
+                    // if( !this.state.validationErrors[id] ){
+                    _this.state.validationErrors[id] = validationResults;
+                    // }
+                    // console.log(this.state.validationErrors);
+                    // const newState = this.state;
+                    // this.setState(newState);
+                    _this.props.validationErrors = validationResults;
+                } else {
+                    if (_this.state.validationErrors[id]) delete _this.state.validationErrors[id];
+                    if (!_this.state.validationErrors) _this.props.validationErrors = [];
+                }
                 return validationResults.filter(function (result) {
                     return result;
                 });
@@ -465,6 +465,9 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             _this.handleValueChange((0, _arrayMove2.default)(_this.getValue(), oldIndex, newIndex));
         };
 
+        _this.state = {
+            validationErrors: {}
+        };
         _this.init();
         return _this;
     }
@@ -552,6 +555,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
         value: function getEditorDefinition(idx, identifier) {
             var _this3 = this;
 
+            var dataTypes = this.dataTypes;
             var _props = this.props,
                 editorRegistry = _props.editorRegistry,
                 options = _props.options;
@@ -563,13 +567,13 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             var createImageVariant = _neosUiBackendConnector2.default.get().endpoints.createImageVariant;
 
             var field = fieldData;
-            if (fieldData.type && this.dataTypes) {
-                field = (0, _plowJs.$merge)(field.type, field, this.dataTypes)[fieldData.type];
+            if (field.type && dataTypes && dataTypes[field.type]) {
+                field = _extends({}, dataTypes[field.type], field);
             }
 
-            // console.log(field);
             var commitChange = function commitChange(event, hook) {
                 var value = _this3.getValue();
+                var id = idx + '_' + identifier;
 
                 value[idx][identifier] = event;
 
@@ -607,7 +611,7 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             return _react2.default.createElement(NeosUiEditors, {
                 label: field.label ? field.label : '',
                 editor: field.editor ? field.editor : 'Neos.Neos/Inspector/Editors/TextFieldEditor',
-                identifier: 'repetable-' + idx + '-' + identifier,
+                identifier: 'repeatable-' + this.props.id + '-' + idx + '-' + identifier,
                 name: '[' + idx + ']' + identifier,
                 commit: commitChange.bind(this),
                 value: propertyValue,
