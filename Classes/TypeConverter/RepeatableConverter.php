@@ -6,8 +6,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Flow\Security\Context;
-use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
 use Neos\ContentRepository\Exception\NodeException;
 
 /**
@@ -26,34 +24,9 @@ class RepeatableConverter extends AbstractTypeConverter
 
     /**
      * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
     protected $propertyMapper;
-
-//
-//    /**
-//     * @Flow\Inject
-//     * @var NodeFactory
-//     */
-//    protected $nodeFactory;
-//
-//    /**
-//     * @Flow\Inject
-//     * @var NodeTypeManager
-//     */
-//    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeServiceInterface
-     */
-    protected $nodeService;
 
     /**
      * @var string

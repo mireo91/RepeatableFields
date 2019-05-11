@@ -13,7 +13,7 @@ class Repeatable implements \Iterator, \JsonSerializable{
     protected $byGroups;
 
     /** @var array */
-    protected $byFields;
+    private $byFields;
 
     /** @var array */
     private $source;
