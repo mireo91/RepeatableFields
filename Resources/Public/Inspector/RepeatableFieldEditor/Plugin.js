@@ -398,19 +398,21 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                     return _this.checkValidator(elementValue, validatorName, validatorConfiguration);
                 });
                 // console.log(idx+'_'+identifier, validationResults, elementValue, elementConfiguration);
-                var id = idx + '_' + identifier;
-                if (validationResults.length > 0 && validationResults[0] != null) {
-                    // if( !this.state.validationErrors[id] ){
-                    _this.state.validationErrors[id] = validationResults;
-                    // }
-                    // console.log(this.state.validationErrors);
-                    // const newState = this.state;
-                    // this.setState(newState);
-                    _this.props.validationErrors = validationResults;
-                } else {
-                    if (_this.state.validationErrors[id]) delete _this.state.validationErrors[id];
-                    if (!_this.state.validationErrors) _this.props.validationErrors = [];
-                }
+                // const id = idx+'_'+identifier;
+                // if( validationResults.length > 0 && validationResults[0] != null){
+                //     // if( !this.state.validationErrors[id] ){
+                //         this.state.validationErrors[id] = validationResults;
+                //     // }
+                //     // console.log(this.state.validationErrors);
+                //     // const newState = this.state;
+                //     // this.setState(newState);
+                //         this.props.validationErrors = validationResults;
+                // }else{
+                //     if( this.state.validationErrors[id] )
+                //         delete this.state.validationErrors[id];
+                //     // if( !this.state.validationErrors )
+                //     //     this.props.validationErrors = [];
+                // }
                 return validationResults.filter(function (result) {
                     return result;
                 });
@@ -544,14 +546,14 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
             this.props.commit(value);
         }
     }, {
-        key: 'isInvalid',
-        value: function isInvalid() {
-            var validationErrors = this.props.validationErrors;
-
-            return validationErrors && validationErrors.length > 0;
-        }
-    }, {
         key: 'getEditorDefinition',
+
+
+        // isInvalid() {
+        //     const {validationErrors} = this.props;
+        //     return validationErrors && validationErrors.length > 0;
+        // }
+
         value: function getEditorDefinition(idx, identifier) {
             var _this3 = this;
 

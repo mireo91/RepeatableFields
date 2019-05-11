@@ -161,21 +161,21 @@ export default class RepeatableField extends PureComponent {
                 return this.checkValidator(elementValue, validatorName, validatorConfiguration);
             });
             // console.log(idx+'_'+identifier, validationResults, elementValue, elementConfiguration);
-            const id = idx+'_'+identifier;
-            if( validationResults.length > 0 && validationResults[0] != null){
-                // if( !this.state.validationErrors[id] ){
-                    this.state.validationErrors[id] = validationResults;
-                // }
-                // console.log(this.state.validationErrors);
-                // const newState = this.state;
-                // this.setState(newState);
-                    this.props.validationErrors = validationResults;
-            }else{
-                if( this.state.validationErrors[id] )
-                    delete this.state.validationErrors[id];
-                if( !this.state.validationErrors )
-                    this.props.validationErrors = [];
-            }
+            // const id = idx+'_'+identifier;
+            // if( validationResults.length > 0 && validationResults[0] != null){
+            //     // if( !this.state.validationErrors[id] ){
+            //         this.state.validationErrors[id] = validationResults;
+            //     // }
+            //     // console.log(this.state.validationErrors);
+            //     // const newState = this.state;
+            //     // this.setState(newState);
+            //         this.props.validationErrors = validationResults;
+            // }else{
+            //     if( this.state.validationErrors[id] )
+            //         delete this.state.validationErrors[id];
+            //     // if( !this.state.validationErrors )
+            //     //     this.props.validationErrors = [];
+            // }
             return validationResults.filter(result => result);
         }
     };
@@ -188,10 +188,10 @@ export default class RepeatableField extends PureComponent {
         console.warn(`Validator ${validatorName} not found`);
     };
 
-    isInvalid() {
-        const {validationErrors} = this.props;
-        return validationErrors && validationErrors.length > 0;
-    }
+    // isInvalid() {
+    //     const {validationErrors} = this.props;
+    //     return validationErrors && validationErrors.length > 0;
+    // }
 
     getEditorDefinition( idx, identifier ) {
         const {dataTypes} = this;

@@ -16,7 +16,7 @@ class Repeatable implements \Iterator, \JsonSerializable{
     protected $byFields;
 
     /** @var array */
-    protected $source;
+    private $source;
 
     /**
      * @var int
@@ -29,7 +29,7 @@ class Repeatable implements \Iterator, \JsonSerializable{
         $this->source = $source;
     }
 
-    public function getSource(){
+    private function getSource(){
         return $this->source;
     }
 
