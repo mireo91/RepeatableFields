@@ -32,14 +32,13 @@ Create property with type `reapeatable`.
                   placeholder: 'default field editor'
               field1:
               	type: Neos\Media\Domain\Model\ImageInterface #type for property mapper
-                editory: 'Neos.Neos/Inspector/Editors/ImageEditor'
+                label: 'Image field'
                 editorOptions:
-                  label: 'Image field'
                   placeholder: 'placeholder test'
               field2:
                 editor: 'Neos.Neos/Inspector/Editors/TextAreaEditor'
+                label: 'Textarea editor'
                 editorOptions:
-                  label: 'Textarea editor'
                   placeholder: 'test placeholder 2'
 ```
 
