@@ -594,9 +594,6 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
 
                 value[idx][identifier] = event;
 
-                console.log('value:', event);
-                console.log('field:', field);
-
                 if (hook) {
                     if (hook['Neos.UI:Hook.BeforeSave.CreateImageVariant']) {
                         var _hook$NeosUIHookBe = hook['Neos.UI:Hook.BeforeSave.CreateImageVariant'].object,
