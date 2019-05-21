@@ -213,6 +213,8 @@ export default class RepeatableField extends PureComponent {
 
             value[idx][identifier] = event;
 
+            console.log('value:',value);
+
             if( hook ){
                 if( hook['Neos.UI:Hook.BeforeSave.CreateImageVariant'] ){
                     const {__identity, adjustments, originalAsset} = hook['Neos.UI:Hook.BeforeSave.CreateImageVariant'].object;
