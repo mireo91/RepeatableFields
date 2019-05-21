@@ -211,7 +211,7 @@ export default class RepeatableField extends PureComponent {
             var value = this.getValue();
             const id = idx+'_'+identifier;
 
-            if(event && field.type === "Neos\\Media\\Domain\\Model\\ImageInterface" ){
+            if(event && field.type === "Neos\\Media\\Domain\\Model\\ImageInterface" ){///
                 value[idx][identifier] = {'__identity': event.__identity};
             }else{
                 value[idx][identifier] = event;

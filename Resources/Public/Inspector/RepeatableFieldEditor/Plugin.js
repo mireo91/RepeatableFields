@@ -592,14 +592,8 @@ var RepeatableField = (_dec = (0, _neosUiDecorators.neos)(function (globalRegist
                 var value = _this3.getValue();
                 var id = idx + '_' + identifier;
 
-                if (field.type === "Neos\\Media\\Domain\\Model\\ImageInterface") {
-
-                    console.log('nie weszło');
-                }
-
-                if (field.type === "Neos\\\\Media\\\\Domain\\\\Model\\\\ImageInterface") {
-
-                    console.log('weszło');
+                if (event && field.type === "Neos\\Media\\Domain\\Model\\ImageInterface") {
+                    ///
                     value[idx][identifier] = { '__identity': event.__identity };
                 } else {
                     value[idx][identifier] = event;
