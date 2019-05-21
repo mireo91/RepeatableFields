@@ -56,9 +56,6 @@ class RepeatableConverter extends AbstractTypeConverter
                     if( $val ){
                         $conf = $configuration->getConfigurationValue('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', $index);
                         $targ = $conf['type']??'string';
-                        if( $val && is_array($val) && isset($val['__type']) ){
-                            unset($val['__type']);
-                        }
                         $v =  $this->propertyMapper->convert($val, $targ);
                         $byIndexes[$index][] = $v;
                     }else{

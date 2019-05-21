@@ -211,7 +211,18 @@ export default class RepeatableField extends PureComponent {
             var value = this.getValue();
             const id = idx+'_'+identifier;
 
-            value[idx][identifier] = event;
+            if( field.type === "Neos\\Media\\Domain\\Model\\ImageInterface" ) {
+
+                console.log('nie weszło');
+            }
+
+            if( field.type === "Neos\\\\Media\\\\Domain\\\\Model\\\\ImageInterface" ){
+
+                console.log('weszło');
+                value[idx][identifier] = {'__identity': event.__identity};
+            }else{
+                value[idx][identifier] = event;
+            }
 
             if( hook ){
                 if( hook['Neos.UI:Hook.BeforeSave.CreateImageVariant'] ){
