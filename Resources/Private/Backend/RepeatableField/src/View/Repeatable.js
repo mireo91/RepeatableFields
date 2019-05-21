@@ -232,9 +232,9 @@ export default class RepeatableField extends PureComponent {
                     });
                     return;
                 }
+            }else{
+                this.handleValueChange(value);//test
             }
-
-            this.handleValueChange(value);
         };
 
         const editorOptions = field.editorOptions;
