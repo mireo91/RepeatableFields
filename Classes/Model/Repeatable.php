@@ -98,4 +98,9 @@ class Repeatable implements \Iterator, \JsonSerializable{
     {
         return $this->source;
     }
+    
+    public function __toString()
+   {
+       return json_encode($this->source);
+   }
 }
