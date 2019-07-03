@@ -50,21 +50,27 @@ class RepeatableConverter extends AbstractTypeConverter
     {
         $convertedProps = [];
         $byIndexes = [];
-        if( $source )
-            foreach( $source as $key => $group ){
-                foreach( $group as $index => $val ){
-                    if( $val ){
+        if( $source ) {
+            if (!is_array($source)) {
+                $source = json_decode($source, true) ?? [];
+            }
+            if (isset($source['byGroup'])) {
+                $source = $source['byGroup'];
+            }
+            foreach ($source as $key => $group) {
+                foreach ($group as $index => $val) {
+                    if ($val) {
                         $conf = $configuration->getConfigurationValue('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', $index);
-                        $targ = $conf['type']??'string';
-                        $v =  $this->propertyMapper->convert($val, $targ);
+                        $targ = $conf['type'] ?? 'string';
+                        $v = $this->propertyMapper->convert($val, $targ);
                         $byIndexes[$index][] = $v;
-                    }else{
+                    } else {
                         $v = $val;
                     }
                     $convertedProps[$key][$index] = $v;
                 }
             }
-
+        }
         $repeatable = new Repeatable($convertedProps, $byIndexes, $source);
 
         return $repeatable;
