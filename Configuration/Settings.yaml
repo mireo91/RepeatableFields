@@ -9,6 +9,8 @@ Neos:
           repeatable:
             typeConverter: Mireo\RepeatableFields\TypeConverter\RepeatableConverter
             editor: Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor
+          Mireo\RepeatableFields\Model\Repeatable:
+            typeConverter: Mireo\RepeatableFields\TypeConverter\RepeatableToArrayConverter
         editors:
           Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor:
             editorOptions:

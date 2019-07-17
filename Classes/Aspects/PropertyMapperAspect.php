@@ -61,7 +61,7 @@ class PropertyMapperAspect
                 $value = $this->propertyMapper->convert($value, $expectedPropertyType, $configuration);
 
                 if (isset($explodedPropertyName[1])) {
-                    return $value->getByField($explodedPropertyName[1]);
+                    return $value->getByFields($explodedPropertyName[1]);
                 }else{
                     return $value;
                 }
@@ -82,7 +82,8 @@ class PropertyMapperAspect
      */
     public function findFirstEligibleTypeConverterInObjectHierarchy(JoinPointInterface $joinPoint){
         $targetType = $joinPoint->getMethodArgument('targetType');
-        if( $targetType == 'repeatable' ){
+        if( $targetType == 'repeatable' || $targetType == 'Mireo\RepeatableFields\Model\Repeatable' ){
+            $targetType = 'repeatable';
             $joinPoint->setMethodArgument('sourceType', $targetType);
             $targetType = 'Mireo\RepeatableFields\Model\Repeatable';
             $joinPoint->setMethodArgument('targetType', $targetType);

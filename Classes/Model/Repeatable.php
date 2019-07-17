@@ -9,13 +9,19 @@ use Neos\Flow\Annotations as Flow;
  */
 class Repeatable implements \Iterator, \JsonSerializable{
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $byGroups;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     private $byFields;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     private $source;
 
     /**
@@ -29,16 +35,26 @@ class Repeatable implements \Iterator, \JsonSerializable{
         $this->source = $source;
     }
 
-    private function getSource(){
+    /**
+     * @return array
+     */
+    private function getSource(): array{
         return $this->source;
     }
 
-    public function getByGroups(){
+    /**
+     * @return array
+     */
+    public function getByGroups(): array{
         return $this->byGroups;
     }
 
-    public function getByField($field){
-        return isset($this->byFields[$field])?$this->byFields[$field]:null;
+    /**
+     * @param string $field
+     * @return array
+     */
+    public function getByFields($field = null): array{
+        return isset($this->byFields[$field])?$this->byFields[$field]:[];
     }
 
     /**
@@ -96,6 +112,10 @@ class Repeatable implements \Iterator, \JsonSerializable{
 
     public function jsonSerialize()
     {
+        return $this->source;
+    }
+
+    public function toArray(){
         return $this->source;
     }
     
