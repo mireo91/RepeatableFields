@@ -15,6 +15,15 @@ Neos:
           Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor:
             editorOptions:
               buttonLabel: 'Neos.Neos:Main:content.inspector.editors.codeEditor.editCode'
+              autoFocus: false
+              disabled: false
+              maxlength: null
+              readonly: false
+              buttonAddLabel: 'Add row'
+              controls:
+                move: true
+                remove: true
+                add: true
     Ui:
       resources:
         javascript:
