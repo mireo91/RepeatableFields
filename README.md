@@ -49,4 +49,3 @@ In fusion you can get data by path  `q(node).property('repetableProperty.field1'
 ## Issues
 
 - early version
-- not all fields are working properly - but most of them should
