@@ -1,5 +1,5 @@
 {
-    "description": "",
+    "description": "Neos package for adding repeatables fields to neos-ui react",
     "type": "neos-plugin",
     "name": "mireo91/repeatablefields",
     "require": {
