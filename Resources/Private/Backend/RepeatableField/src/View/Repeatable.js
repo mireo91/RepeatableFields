@@ -19,6 +19,10 @@ import backend from '@neos-project/neos-ui-backend-connector';
 export default class Repeatable extends PureComponent {
     emptyGroup = {};
 
+    state = {
+        dataTypes: {}
+    };
+
     static propTypes = {
         identifier: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
@@ -37,6 +41,12 @@ export default class Repeatable extends PureComponent {
         commit: PropTypes.func.isRequired
     };
 
+    componentDidMount() {
+        backend.get().endpoints.dataSource('get-property-types', null, {}).then( (json) => {
+            this.setState({dataTypes: json} )
+        });
+    }
+
     constructor(props){
         super(props);
         const {properties} = props.options;
@@ -46,10 +56,6 @@ export default class Repeatable extends PureComponent {
                 this.emptyGroup[property] = '';
             });
         }
-
-        backend.get().endpoints.dataSource('get-property-types', null, {}).then( (json) => {
-            this.dataTypes = json;
-        });
     }
 
     getValue = () => {
@@ -123,15 +129,16 @@ export default class Repeatable extends PureComponent {
     };
 
     getProperty = (property, idx) => {
+        const {dataTypes} = this.state;
 
-        if( !this.dataTypes ) {
+        if( !dataTypes ) {
             return;
         }
 
         // console.log('getProperty');
         const repeatableValue = this.getValue();
         let propertyDefinition = this.props.options.properties[property];
-        const defaultDataType = propertyDefinition.type?this.dataTypes[propertyDefinition.type]:{};
+        const defaultDataType = propertyDefinition.type?dataTypes[propertyDefinition.type]:{};
 
         if( defaultDataType ){
             // console.log(defaultDataType);
@@ -177,7 +184,7 @@ export default class Repeatable extends PureComponent {
                     element={this.createElement}
                     items={this.getValue()}
                     onSortEndAction={this.onSortAction}
-                    />
+                />
                 {options.controls.add?(<button type="button" onClick={() => this.handleAdd()} className={style.btn}>{options.buttonAddLabel}</button>):''}
             </Fragment>
         );
