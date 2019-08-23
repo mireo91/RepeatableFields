@@ -28,4 +28,4 @@ Neos:
       resources:
         javascript:
           'Mireo.RepeatableFields:RepeatableField':
-            resource: resource://Mireo.RepeatableFields/Public/Inspector/RepeatableFieldEditor/Plugin.js
+            resource: resource://Mireo.RepeatableFields/Public/Inspector/RepeatableFieldEditor/Plugin.js?v=124
