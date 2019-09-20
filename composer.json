@@ -2,6 +2,9 @@
     "description": "Neos package for adding repeatables fields to neos-ui react",
     "type": "neos-plugin",
     "name": "mireo91/repeatablefields",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
     "require": {
         "neos/neos-ui": ">=3.7.0"
     },
