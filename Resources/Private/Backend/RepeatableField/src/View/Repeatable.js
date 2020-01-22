@@ -20,7 +20,8 @@ export default class Repeatable extends PureComponent {
     emptyGroup = {};
 
     state = {
-        dataTypes: {}
+        dataTypes: {},
+        isLoading: true
     };
 
     static propTypes = {
@@ -43,7 +44,7 @@ export default class Repeatable extends PureComponent {
 
     componentDidMount() {
         backend.get().endpoints.dataSource('get-property-types', null, {}).then( (json) => {
-            this.setState({dataTypes: json} )
+            this.setState({dataTypes: json, isLoading: false} );
         });
     }
 
@@ -129,9 +130,9 @@ export default class Repeatable extends PureComponent {
     };
 
     getProperty = (property, idx) => {
-        const {dataTypes} = this.state;
+        const {dataTypes, isLoading} = this.state;
 
-        if( !dataTypes ) {
+        if( isLoading ) {
             return;
         }
 
@@ -166,7 +167,7 @@ export default class Repeatable extends PureComponent {
                 validationErrors={this.validateElement(value, propertyDefinition, idx, property)}
                 highlight={false}
                 property={property}
-                id={idx}
+                id={`repeatable-${idx}-${property}`}
                 commit={this.commitChange}
             />);
     };
@@ -177,16 +178,23 @@ export default class Repeatable extends PureComponent {
 
     render() {
         const {options} = this.props;
+        const {isLoading} = this.state;
 
-        return (
-            <Fragment>
-                <Sortable
-                    element={this.createElement}
-                    items={this.getValue()}
-                    onSortEndAction={this.onSortAction}
-                />
-                {options.controls.add?(<button type="button" onClick={() => this.handleAdd()} className={style.btn}>{options.buttonAddLabel}</button>):''}
-            </Fragment>
-        );
+        if( !isLoading ){
+            return (
+                <Fragment>
+                    <Sortable
+                        element={this.createElement}
+                        items={this.getValue()}
+                        onSortEndAction={this.onSortAction}
+                    />
+                    {options.controls.add?(<button type="button" onClick={() => this.handleAdd()} className={style.btn}>{options.buttonAddLabel}</button>):''}
+                </Fragment>
+            );
+        }else{
+            return (
+                <div>Is loading...</div>
+            );
+        }
     }
 }
