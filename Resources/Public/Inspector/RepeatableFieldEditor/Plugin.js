@@ -2390,12 +2390,8 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             dataTypes = _state.dataTypes,
             isLoading = _state.isLoading;
 
-
-        if (isLoading) {
-            return;
-        }
-
         // console.log('getProperty');
+
         var repeatableValue = _this4.getValue();
         var propertyDefinition = _this4.props.options.properties[property];
         var defaultDataType = propertyDefinition.type ? dataTypes[propertyDefinition.type] : {};
