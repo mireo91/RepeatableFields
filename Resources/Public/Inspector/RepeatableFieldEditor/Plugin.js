@@ -2420,7 +2420,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             validationErrors: _this4.validateElement(value, propertyDefinition, idx, property),
             highlight: false,
             property: property,
-            id: 'repeatable-' + idx + '-' + property,
+            id: idx,
             commit: _this4.commitChange
         });
     };
