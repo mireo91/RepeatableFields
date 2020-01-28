@@ -24,6 +24,7 @@ export default class Repeatable extends PureComponent {
         isLoading: true
     };
 
+
     static propTypes = {
         identifier: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
