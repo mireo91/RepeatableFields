@@ -131,10 +131,6 @@ export default class Repeatable extends PureComponent {
     getProperty = (property, idx) => {
         const {dataTypes, isLoading} = this.state;
 
-        if( isLoading ) {
-            return;
-        }
-
         // console.log('getProperty');
         const repeatableValue = this.getValue();
         let propertyDefinition = this.props.options.properties[property];
