@@ -66,7 +66,6 @@ export default class Repeatable extends PureComponent {
 
     handleValueChange = (value) => {
         const {commit} = this.props;
-        // console.log('handleNewChange', value);
         commit(value);
     };
 
@@ -167,7 +166,7 @@ export default class Repeatable extends PureComponent {
                 validationErrors={this.validateElement(value, propertyDefinition, idx, property)}
                 highlight={false}
                 property={property}
-                id={`repeatable-${idx}-${property}`}
+                id={idx}
                 commit={this.commitChange}
             />);
     };

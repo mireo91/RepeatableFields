@@ -2301,7 +2301,6 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
 
     this.handleValueChange = function (value) {
         var commit = _this4.props.commit;
-        // console.log('handleNewChange', value);
 
         commit(value);
     };
@@ -2424,7 +2423,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             validationErrors: _this4.validateElement(value, propertyDefinition, idx, property),
             highlight: false,
             property: property,
-            id: 'repeatable-' + idx + '-' + property,
+            id: idx,
             commit: _this4.commitChange
         });
     };
