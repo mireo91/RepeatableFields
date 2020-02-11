@@ -22,6 +22,8 @@ Create property with type `reapeatable`.
           group: document
           editorOptions:
             buttonAddLabel: 'Add row' #default lable
+            max: 100 #default max
+            min: 0   #default min
             controls:  #default all set to true
               move: true
               remove: true

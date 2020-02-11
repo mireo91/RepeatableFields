@@ -21,6 +21,8 @@ export default class Repeatable extends PureComponent {
 
     state = {
         dataTypes: {},
+        allowAdd: true,
+        allowRemove: true,
         isLoading: true
     };
 
@@ -44,6 +46,10 @@ export default class Repeatable extends PureComponent {
 
     componentDidMount() {
         backend.get().endpoints.dataSource('get-property-types', null, {}).then( (json) => {
+            this.initialValue();
+            const value = this.getValue();
+            this.testIfAdd(value);
+            this.testIfRemove(value);
             this.setState({dataTypes: json, isLoading: false} );
         });
     }
@@ -59,15 +65,58 @@ export default class Repeatable extends PureComponent {
         }
     }
 
+    initialValue = () => {
+        const {value, options} = this.props;
+        var valueHelper = value;
+        if( options.min ){
+            if( value.length < options.min ){
+                for(var i=0; i<options.min;++i){
+                    if( value[i] ){
+                        valueHelper[i] = value[i];
+                    }else{
+                        valueHelper[i] = this.emptyGroup;
+                    }
+                    // console.log(i);
+                    // if(i > options.min){
+                    //     console.log('end');
+                    // }
+                }
+            }
+        }
+    };
+
     getValue = () => {
         const {value} = this.props;
         return value?value:[];
     };
 
     handleValueChange = (value) => {
-        const {commit} = this.props;
+        const {commit, options} = this.props;
         // console.log('handleNewChange', value);
         commit(value);
+        this.testIfAdd(value);
+        this.testIfRemove(value);
+    };
+
+    testIfAdd = (value) => {
+        const {options} = this.props;
+        if( options.max ) {
+            if (options.max > value.length) {
+                this.setState({allowAdd: true});
+            } else {
+                this.setState({allowAdd: false});
+            }
+        }
+    };
+    testIfRemove = (value) => {
+        const {options} = this.props;
+        if( options.min ) {
+            if (options.min < value.length) {
+                this.setState({allowRemove: true});
+            } else {
+                this.setState({allowRemove: false});
+            }
+        }
     };
 
     handleAdd = () => {
@@ -107,6 +156,7 @@ export default class Repeatable extends PureComponent {
 
     createElement = (idx) => {
         const {options, value} = this.props;
+        const {allowRemove} = this.state;
         const DragHandle = SortableHandle(() => <span type="button" className={style['btn-move']}>=</span>);
 
         return (
@@ -115,7 +165,7 @@ export default class Repeatable extends PureComponent {
                 <div className={style['repeatable-field-wrapper']}>
                     {this.getProperties(idx)}
                 </div>
-                {options.controls.remove?(<button type="button" onClick={() => this.handleRemove(idx)} className={style['btn-delete']}>-</button>):''}
+                {options.controls.remove && allowRemove?(<button type="button" onClick={() => this.handleRemove(idx)} className={style['btn-delete']}>-</button>):''}
             </div>
         );
     };
@@ -174,7 +224,7 @@ export default class Repeatable extends PureComponent {
 
     render() {
         const {options} = this.props;
-        const {isLoading} = this.state;
+        const {isLoading, allowAdd} = this.state;
 
         if( !isLoading ){
             return (
@@ -184,7 +234,7 @@ export default class Repeatable extends PureComponent {
                         items={this.getValue()}
                         onSortEndAction={this.onSortAction}
                     />
-                    {options.controls.add?(<button type="button" onClick={() => this.handleAdd()} className={style.btn}>{options.buttonAddLabel}</button>):''}
+                    {options.controls.add && allowAdd?(<button type="button" onClick={() => this.handleAdd()} className={style.btn}>{options.buttonAddLabel}</button>):''}
                 </Fragment>
             );
         }else{
