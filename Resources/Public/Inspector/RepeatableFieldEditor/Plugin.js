@@ -2301,6 +2301,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
 
     this.handleValueChange = function (value) {
         var commit = _this4.props.commit;
+        // console.log('handleNewChange', value);
 
         commit(value);
     };
@@ -2389,8 +2390,12 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             dataTypes = _state.dataTypes,
             isLoading = _state.isLoading;
 
-        // console.log('getProperty');
 
+        if (isLoading) {
+            return;
+        }
+
+        // console.log('getProperty');
         var repeatableValue = _this4.getValue();
         var propertyDefinition = _this4.props.options.properties[property];
         var defaultDataType = propertyDefinition.type ? dataTypes[propertyDefinition.type] : {};
@@ -2419,7 +2424,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             validationErrors: _this4.validateElement(value, propertyDefinition, idx, property),
             highlight: false,
             property: property,
-            id: idx,
+            id: 'repeatable-' + idx + '-' + property,
             commit: _this4.commitChange
         });
     };
@@ -2722,6 +2727,8 @@ function _possibleConstructorReturn(self, call) {
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = _typeof;
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;

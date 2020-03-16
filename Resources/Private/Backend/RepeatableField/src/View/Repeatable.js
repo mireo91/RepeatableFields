@@ -24,7 +24,6 @@ export default class Repeatable extends PureComponent {
         isLoading: true
     };
 
-
     static propTypes = {
         identifier: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
@@ -67,6 +66,7 @@ export default class Repeatable extends PureComponent {
 
     handleValueChange = (value) => {
         const {commit} = this.props;
+        // console.log('handleNewChange', value);
         commit(value);
     };
 
@@ -132,6 +132,10 @@ export default class Repeatable extends PureComponent {
     getProperty = (property, idx) => {
         const {dataTypes, isLoading} = this.state;
 
+        if( isLoading ) {
+            return;
+        }
+
         // console.log('getProperty');
         const repeatableValue = this.getValue();
         let propertyDefinition = this.props.options.properties[property];
@@ -163,7 +167,7 @@ export default class Repeatable extends PureComponent {
                 validationErrors={this.validateElement(value, propertyDefinition, idx, property)}
                 highlight={false}
                 property={property}
-                id={idx}
+                id={`repeatable-${idx}-${property}`}
                 commit={this.commitChange}
             />);
     };

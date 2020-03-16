@@ -6,7 +6,6 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/neos": ">=5.0",
         "neos/neos-ui": ">=3.7.0"
     },
     "autoload": {

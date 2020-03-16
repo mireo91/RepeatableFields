@@ -28,7 +28,10 @@ class PropertyTypesSource extends AbstractDataSource {
      * @return mixed JSON serializable data
      * @api
      */
-    public function getData(NodeInterface $node = null, array $arguments = []){
+    public function getData(NodeInterface $node = null, array $arguments)
+    {
+//        $arrayOfelements = array();
+
         return $this->dataTypes;
     }
 
