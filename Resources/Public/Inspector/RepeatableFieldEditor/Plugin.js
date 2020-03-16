@@ -2423,7 +2423,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             i18nRegistry: _this4.props.i18nRegistry,
             validationErrors: _this4.validateElement(value, propertyDefinition, idx, property),
             highlight: false,
-            property: property,
+            property: idx + '.' + property,
             id: 'repeatable-' + idx + '-' + property,
             commit: _this4.commitChange
         });
