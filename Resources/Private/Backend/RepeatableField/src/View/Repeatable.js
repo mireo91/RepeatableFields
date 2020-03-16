@@ -119,6 +119,7 @@ export default class Repeatable extends PureComponent {
         }
     };
 
+
     handleAdd = () => {
         let value = this.getValue();
         value = [...value, this.emptyGroup];
