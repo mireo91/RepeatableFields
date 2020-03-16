@@ -2208,6 +2208,10 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             var _this2 = this;
 
             _neosUiBackendConnector2.default.get().endpoints.dataSource('get-property-types', null, {}).then(function (json) {
+                _this2.initialValue();
+                var value = _this2.getValue();
+                _this2.testIfAdd(value);
+                _this2.testIfRemove(value);
                 _this2.setState({ dataTypes: json, isLoading: false });
             });
         }
@@ -2237,7 +2241,9 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             var _this3 = this;
 
             var options = this.props.options;
-            var isLoading = this.state.isLoading;
+            var _state = this.state,
+                isLoading = _state.isLoading,
+                allowAdd = _state.allowAdd;
 
 
             if (!isLoading) {
@@ -2249,7 +2255,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
                         items: this.getValue(),
                         onSortEndAction: this.onSortAction
                     }),
-                    options.controls.add ? _react2.default.createElement(
+                    options.controls.add && allowAdd ? _react2.default.createElement(
                         'button',
                         { type: 'button', onClick: function onClick() {
                                 return _this3.handleAdd();
@@ -2290,7 +2296,32 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
     this.emptyGroup = {};
     this.state = {
         dataTypes: {},
+        allowAdd: true,
+        allowRemove: true,
         isLoading: true
+    };
+
+    this.initialValue = function () {
+        var _props = _this4.props,
+            value = _props.value,
+            options = _props.options;
+
+        var valueHelper = value;
+        if (options.min) {
+            if (value.length < options.min) {
+                for (var i = 0; i < options.min; ++i) {
+                    if (value[i]) {
+                        valueHelper[i] = value[i];
+                    } else {
+                        valueHelper[i] = _this4.emptyGroup;
+                    }
+                    // console.log(i);
+                    // if(i > options.min){
+                    //     console.log('end');
+                    // }
+                }
+            }
+        }
     };
 
     this.getValue = function () {
@@ -2300,10 +2331,38 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
     };
 
     this.handleValueChange = function (value) {
-        var commit = _this4.props.commit;
+        var _props2 = _this4.props,
+            commit = _props2.commit,
+            options = _props2.options;
         // console.log('handleNewChange', value);
 
         commit(value);
+        _this4.testIfAdd(value);
+        _this4.testIfRemove(value);
+    };
+
+    this.testIfAdd = function (value) {
+        var options = _this4.props.options;
+
+        if (options.max) {
+            if (options.max > value.length) {
+                _this4.setState({ allowAdd: true });
+            } else {
+                _this4.setState({ allowAdd: false });
+            }
+        }
+    };
+
+    this.testIfRemove = function (value) {
+        var options = _this4.props.options;
+
+        if (options.min) {
+            if (options.min < value.length) {
+                _this4.setState({ allowRemove: true });
+            } else {
+                _this4.setState({ allowRemove: false });
+            }
+        }
     };
 
     this.handleAdd = function () {
@@ -2345,9 +2404,10 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
     };
 
     this.createElement = function (idx) {
-        var _props = _this4.props,
-            options = _props.options,
-            value = _props.value;
+        var _props3 = _this4.props,
+            options = _props3.options,
+            value = _props3.value;
+        var allowRemove = _this4.state.allowRemove;
 
         var DragHandle = (0, _reactSortableHoc.SortableHandle)(function () {
             return _react2.default.createElement(
@@ -2366,7 +2426,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
                 { className: _style2.default['repeatable-field-wrapper'] },
                 _this4.getProperties(idx)
             ),
-            options.controls.remove ? _react2.default.createElement(
+            options.controls.remove && allowRemove ? _react2.default.createElement(
                 'button',
                 { type: 'button', onClick: function onClick() {
                         return _this4.handleRemove(idx);
@@ -2386,9 +2446,9 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
     };
 
     this.getProperty = function (property, idx) {
-        var _state = _this4.state,
-            dataTypes = _state.dataTypes,
-            isLoading = _state.isLoading;
+        var _state2 = _this4.state,
+            dataTypes = _state2.dataTypes,
+            isLoading = _state2.isLoading;
 
         // console.log('getProperty');
 

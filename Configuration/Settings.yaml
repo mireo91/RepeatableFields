@@ -20,6 +20,8 @@ Neos:
               maxlength: null
               readonly: false
               buttonAddLabel: 'Add row'
+              min: 0
+              max: 100
               controls:
                 move: true
                 remove: true
