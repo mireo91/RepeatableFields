@@ -2320,7 +2320,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
     };
 
     this.commitChange = function (idx, property, event) {
-        _this4.handleValueChange((0, _plowJs.$set)([idx, property], event, _this4.props.value));
+        _this4.handleValueChange((0, _plowJs.$set)(property, event, _this4.props.value));
     };
 
     this.validateElement = function (elementValue, elementConfiguration, idx, identifier) {
@@ -2419,7 +2419,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             i18nRegistry: _this4.props.i18nRegistry,
             validationErrors: _this4.validateElement(value, propertyDefinition, idx, property),
             highlight: false,
-            property: property,
+            property: idx + '.' + property,
             id: 'repeatable-' + idx + '-' + property,
             commit: _this4.commitChange
         });
@@ -2723,6 +2723,8 @@ function _possibleConstructorReturn(self, call) {
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = _typeof;
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;

@@ -82,8 +82,7 @@ export default class Repeatable extends PureComponent {
     };
 
     commitChange = (idx, property, event) => {
-        this.handleValueChange($set([idx, property], event, this.props.value));
-
+        this.handleValueChange($set(property, event, this.props.value));
     };
 
     validateElement = (elementValue, elementConfiguration, idx, identifier) => {
@@ -162,7 +161,7 @@ export default class Repeatable extends PureComponent {
                 i18nRegistry={this.props.i18nRegistry}
                 validationErrors={this.validateElement(value, propertyDefinition, idx, property)}
                 highlight={false}
-                property={property}
+                property={`${idx}.${property}`}
                 id={`repeatable-${idx}-${property}`}
                 commit={this.commitChange}
             />);
