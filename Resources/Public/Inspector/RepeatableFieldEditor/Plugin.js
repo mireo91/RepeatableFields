@@ -2320,7 +2320,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
     };
 
     this.commitChange = function (idx, property, event) {
-        _this4.handleValueChange((0, _plowJs.$set)([idx, property], event, _this4.props.value));
+        _this4.handleValueChange((0, _plowJs.$set)(property, event, _this4.props.value));
     };
 
     this.validateElement = function (elementValue, elementConfiguration, idx, identifier) {
