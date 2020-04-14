@@ -68,7 +68,7 @@ class RepeatableConverter extends AbstractTypeConverter
             }
             foreach ($source as $key => $group) {
                 foreach ($group as $index => $val) {
-                    if ($val) {
+                    if ( isset($val) && $val!=="" ) {
                         $conf = $properties[$index]??null;
                         $targ = $conf['type'] ?? 'string';
                         $nodeType = new NodeType('test',[],[], [
