@@ -7,7 +7,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  */
-class Repeatable implements \Iterator, \JsonSerializable{
+class Repeatable implements \Iterator, \JsonSerializable, \Countable {
 
     /**
      * @var array
@@ -55,6 +55,10 @@ class Repeatable implements \Iterator, \JsonSerializable{
      */
     public function getByFields($field = null): array{
         return isset($this->byFields[$field])?$this->byFields[$field]:[];
+    }
+
+    public function count(): int{
+        return count($this->toArray());
     }
 
     /**
