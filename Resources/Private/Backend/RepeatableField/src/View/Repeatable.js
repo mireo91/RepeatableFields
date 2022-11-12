@@ -103,13 +103,13 @@ export default class Repeatable extends PureComponent {
 
     componentDidMount() {
         backend.get().endpoints.dataSource('get-property-types', null, {}).then( (json) => {
+
+					// this.loadSelectBoxOptions();
+					this.initialValue();
 					const value = this.getValue();
 					this.testIfAdd(value);
 					this.testIfRemove(value);
 					this.setState({dataTypes: json, isLoading: false} );
-
-					// this.loadSelectBoxOptions();
-					this.initialValue();
         });
     }
 

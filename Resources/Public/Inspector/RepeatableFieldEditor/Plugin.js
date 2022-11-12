@@ -2253,13 +2253,13 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             var _this2 = this;
 
             _neosUiBackendConnector2.default.get().endpoints.dataSource('get-property-types', null, {}).then(function (json) {
+
+                // this.loadSelectBoxOptions();
+                _this2.initialValue();
                 var value = _this2.getValue();
                 _this2.testIfAdd(value);
                 _this2.testIfRemove(value);
                 _this2.setState({ dataTypes: json, isLoading: false });
-
-                // this.loadSelectBoxOptions();
-                _this2.initialValue();
             });
         }
 
