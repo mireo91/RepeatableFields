@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Sortable from './Sortable';
 import Envelope from './Envelope';
 
+import {connect} from 'react-redux';
+import {selectors} from '@neos-project/neos-ui-redux-store';
 import I18n from '@neos-project/neos-ui-i18n';
 import {neos} from '@neos-project/neos-ui-decorators';
 import {$get, $set, $transform, $merge} from 'plow-js';
@@ -12,9 +14,21 @@ import {SortableHandle} from "react-sortable-hoc";
 import arrayMove from "array-move";
 import backend from '@neos-project/neos-ui-backend-connector';
 
+
+// const getDataLoaderOptionsForProps = props => ({
+// 	contextNodePath: props.focusedNodePath,
+// 	dataSourceIdentifier: props.options.dataSourceIdentifier,
+// 	// dataSourceUri: props.options.dataSourceUri,
+// 	dataSourceAdditionalData: props.options.dataSourceAdditionalData,
+// 	dataSourceDisableCaching: Boolean(props.options.dataSourceDisableCaching)
+// });
 @neos(globalRegistry => ({
     editorRegistry: globalRegistry.get('inspector').get('editors'),
-    i18nRegistry: globalRegistry.get('i18n')
+    i18nRegistry: globalRegistry.get('i18n'),
+		dataSourcesDataLoader: globalRegistry.get('dataLoaders').get('DataSources')
+}))
+@connect($transform({
+	focusedNodePath: selectors.CR.Nodes.focusedNodePathSelector
 }))
 export default class Repeatable extends PureComponent {
     emptyGroup = {};
@@ -23,7 +37,8 @@ export default class Repeatable extends PureComponent {
         dataTypes: {},
         allowAdd: true,
         allowRemove: true,
-        isLoading: true
+        isLoading: true,
+				currentValue: []
     };
 
     static propTypes = {
@@ -41,18 +56,91 @@ export default class Repeatable extends PureComponent {
         helpThumbnail: PropTypes.string,
         highlight: PropTypes.bool,
 
-        commit: PropTypes.func.isRequired
+        commit: PropTypes.func.isRequired,
+				// options: PropTypes.shape({
+				// 	buttonAddLabel: PropTypes.string,
+				// 	// max: PropTypes.int,
+				// 	// min: PropTypes.int,
+				// 	controls: PropTypes.shape({
+				// 		move: PropTypes.bool,
+				// 		remove: PropTypes.bool,
+				// 		add: PropTypes.bool
+				// 	}),
+				//
+				// 	properties: PropTypes.objectOf(
+				// 		PropTypes.object()
+				// 	),
+				//
+				// 	placeholder: PropTypes.integersOnly,
+				// 	// disabled: PropTypes.bool,
+				// 	//
+				// 	// multiple: PropTypes.bool,
+				//
+				// 	dataSourceIdentifier: PropTypes.string,
+				// 	dataSourceUri: PropTypes.string,
+				// 	dataSourceDisableCaching: PropTypes.bool,
+				// 	dataSourceAdditionalData: PropTypes.objectOf(PropTypes.any),
+				//
+				// 	// minimumResultsForSearch: PropTypes.number,
+				//
+				// 	// values: PropTypes.objectOf(
+				// 	// 	PropTypes.shape({
+				// 	// 		label: PropTypes.string,
+				// 	// 		icon: PropTypes.string,
+				// 	// 		preview: PropTypes.string,
+				// 	//
+				// 	// 		// TODO
+				// 	// 		group: PropTypes.string
+				// 	// 	})
+				// 	// )
+				//
+				// }).isRequired,
+			dataSourcesDataLoader: PropTypes.shape({
+				resolveValue: PropTypes.func.isRequired
+			}).isRequired,
+			focusedNodePath: PropTypes.string.isRequired
     };
 
     componentDidMount() {
         backend.get().endpoints.dataSource('get-property-types', null, {}).then( (json) => {
-            this.initialValue();
-            const value = this.getValue();
-            this.testIfAdd(value);
-            this.testIfRemove(value);
-            this.setState({dataTypes: json, isLoading: false} );
+					const value = this.getValue();
+					this.testIfAdd(value);
+					this.testIfRemove(value);
+					this.setState({dataTypes: json, isLoading: false} );
+
+					// this.loadSelectBoxOptions();
+					this.initialValue();
         });
     }
+
+		// componentDidMount() {
+		// 	this.loadSelectBoxOptions();
+		// }
+
+		componentDidUpdate(prevProps) {
+			// if our data loader options have changed (e.g. due to use of ClientEval), we want to re-initialize the data source.
+			// if (JSON.stringify(getDataLoaderOptionsForProps(this.props)) !== JSON.stringify(getDataLoaderOptionsForProps(prevProps))) {
+			// 	this.loadSelectBoxOptions();
+			// }
+			if( JSON.stringify((this.props.value)) !== JSON.stringify(prevProps.value) ){
+				this.initialValue();
+			}
+		}
+
+		// loadSelectBoxOptions() {
+		// 	if( !this.props.options.dataSourceIdentifier )
+		// 		return;
+		// 	this.setState({isLoading: true});
+		// 	this.props.dataSourcesDataLoader.resolveValue(getDataLoaderOptionsForProps(this.props), this.getValue())
+		// 		.then(selectBoxOptions => {
+		// 			console.log(selectBoxOptions);
+		// 			this.setState({
+		// 				isLoading: false,
+		// 				// dataSourceConf: selectBoxOptions
+		// 				// selectBoxOptions
+		// 			});
+		// 		});
+		// }
 
     constructor(props){
         super(props);
@@ -60,42 +148,54 @@ export default class Repeatable extends PureComponent {
 
         if( properties ) {
             (Object.keys(properties)).map((property, index) => {
-                this.emptyGroup[property] = '';
+                this.emptyGroup[property] = properties[property].defaultValue?properties[property].defaultValue:'';
             });
         }
     }
 
     initialValue = () => {
-        const {value, options} = this.props;
-        var valueHelper = value;
+        const {options, value} = this.props;
+				var currentValue = value?value:{};
         if( options.min ){
-            if( value.length < options.min ){
+            if( currentValue.length < options.min ){
                 for(var i=0; i<options.min;++i){
-                    if( value[i] ){
-                        valueHelper[i] = value[i];
+                    if( currentValue[i] ){
+											currentValue[i] = value[i];
                     }else{
-                        valueHelper[i] = this.emptyGroup;
+											currentValue[i] = this.emptyGroup;
                     }
-                    // console.log(i);
-                    // if(i > options.min){
-                    //     console.log('end');
-                    // }
                 }
-            }
+						}
         }
+				if( options.max ){
+					if(currentValue.length > options.max){
+						currentValue = currentValue.slice(0, options.max);
+					}
+				}
+				if( currentValue.length > 0 ){
+					currentValue.forEach((val, key) => {
+						Object.keys(val).forEach((vv, kk)=> {
+							if( !this.emptyGroup.hasOwnProperty(vv) ){
+								delete currentValue[key][vv];
+							}
+						});
+					});
+				}
+				this.setState({currentValue: currentValue});
     };
 
     getValue = () => {
-        const {value} = this.props;
-        return value?value:[];
+				// this.initialValue();
+        const {currentValue} = this.state;
+        return currentValue?currentValue:[];
     };
 
     handleValueChange = (value) => {
         const {commit, options} = this.props;
-        // console.log('handleNewChange', value);
         commit(value);
-        this.testIfAdd(value);
-        this.testIfRemove(value);
+				this.testIfAdd(value);
+				this.testIfRemove(value);
+				this.setState({currentValue: value});
     };
 
     testIfAdd = (value) => {
@@ -132,7 +232,7 @@ export default class Repeatable extends PureComponent {
     };
 
     commitChange = (idx, property, event) => {
-        this.handleValueChange($set(property, event, this.props.value));
+        this.handleValueChange($set(property, event, this.getValue()));
 
     };
 
@@ -156,13 +256,13 @@ export default class Repeatable extends PureComponent {
     };
 
     createElement = (idx) => {
-        const {options, value} = this.props;
-        const {allowRemove} = this.state;
+        const {options} = this.props;
+        const {allowRemove, currentValue} = this.state;
         const DragHandle = SortableHandle(() => <span type="button" className={style['btn-move']}>=</span>);
 
         return (
             <div className={style['repeatable-wrapper']}>
-                {options.controls.move && value.length > 1?(<DragHandle />):''}
+                {options.controls.move && currentValue.length > 1?(<DragHandle />):''}
                 <div className={style['repeatable-field-wrapper']}>
                     {this.getProperties(idx)}
                 </div>
@@ -181,7 +281,7 @@ export default class Repeatable extends PureComponent {
     };
 
     getProperty = (property, idx) => {
-        const {dataTypes, isLoading} = this.state;
+        const {dataTypes, isLoading, dataSourceConf} = this.state;
 
         // console.log('getProperty');
         const repeatableValue = this.getValue();
@@ -189,8 +289,6 @@ export default class Repeatable extends PureComponent {
         const defaultDataType = propertyDefinition.type?dataTypes[propertyDefinition.type]:{};
 
         if( defaultDataType ){
-            // console.log(defaultDataType);
-            // console.log(propertyDefinition);
             const merge = require('lodash.merge');
             propertyDefinition = merge(defaultDataType, propertyDefinition);
 
@@ -198,16 +296,15 @@ export default class Repeatable extends PureComponent {
 
         const editorOptions = propertyDefinition.editorOptions?propertyDefinition.editorOptions:{};
         const editor = propertyDefinition.editor?propertyDefinition.editor:'Neos.Neos/Inspector/Editors/TextFieldEditor';
-        const value = repeatableValue[idx][property]?repeatableValue[idx][property]:'';
-        // return idx+' '+property;
+        let value = repeatableValue[idx][property]?repeatableValue[idx][property]:'';
 
         return (
             <Envelope
                 identifier={`repeatable-${idx}-${property}`}
-                label={propertyDefinition.label?propertyDefinition.label:''}
+                // label={propertyDefinition.label?propertyDefinition.label:''}
                 options={editorOptions}
                 value={value}
-                renderSecondaryInspector={this.props.renderSecondaryInspector}
+                // renderSecondaryInspector={this.props.renderSecondaryInspector}
                 editor={editor}
                 editorRegistry={this.props.editorRegistry}
                 i18nRegistry={this.props.i18nRegistry}
@@ -216,6 +313,7 @@ export default class Repeatable extends PureComponent {
                 property={`${idx}.${property}`}
                 id={`repeatable-${idx}-${property}`}
                 commit={this.commitChange}
+								{...propertyDefinition}
             />);
     };
 
@@ -224,8 +322,9 @@ export default class Repeatable extends PureComponent {
     };
 
     render() {
-        const {options} = this.props;
+        const {options, i18nRegistry} = this.props;
         const {isLoading, allowAdd} = this.state;
+				const loadingLabel = i18nRegistry.translate('loading', 'Loading', [], 'Neos.Neos', 'Main');
 
         if( !isLoading ){
             return (
@@ -240,7 +339,7 @@ export default class Repeatable extends PureComponent {
             );
         }else{
             return (
-                <div>Is loading...</div>
+                <div>{loadingLabel}</div>
             );
         }
     }
