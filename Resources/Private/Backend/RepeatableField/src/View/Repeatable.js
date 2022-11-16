@@ -302,7 +302,7 @@ export default class Repeatable extends PureComponent {
                 // label={propertyDefinition.label?propertyDefinition.label:''}
                 options={editorOptions}
                 value={value}
-                // renderSecondaryInspector={this.props.renderSecondaryInspector}
+                renderSecondaryInspector={this.props.renderSecondaryInspector}
                 editor={editor}
                 editorRegistry={this.props.editorRegistry}
                 i18nRegistry={this.props.i18nRegistry}
