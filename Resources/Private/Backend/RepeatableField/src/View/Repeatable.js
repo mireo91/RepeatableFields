@@ -44,8 +44,8 @@ export default class Repeatable extends PureComponent {
     static propTypes = {
         identifier: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
-        options: PropTypes.object,
-        value: PropTypes.object,
+        // options: PropTypes.object,
+        value: PropTypes.arrayOf(PropTypes.object),
         renderSecondaryInspector: PropTypes.func,
         editor: PropTypes.string.isRequired,
         editorRegistry: PropTypes.object.isRequired,
@@ -57,8 +57,8 @@ export default class Repeatable extends PureComponent {
         highlight: PropTypes.bool,
 
         commit: PropTypes.func.isRequired,
-				// options: PropTypes.shape({
-				// 	buttonAddLabel: PropTypes.string,
+				options: PropTypes.shape({
+				buttonAddLabel: PropTypes.string,
 				// 	// max: PropTypes.int,
 				// 	// min: PropTypes.int,
 				// 	controls: PropTypes.shape({
@@ -94,7 +94,7 @@ export default class Repeatable extends PureComponent {
 				// 	// 	})
 				// 	// )
 				//
-				// }).isRequired,
+				}).isRequired,
 			dataSourcesDataLoader: PropTypes.shape({
 				resolveValue: PropTypes.func.isRequired
 			}).isRequired,
@@ -145,7 +145,6 @@ export default class Repeatable extends PureComponent {
     constructor(props){
         super(props);
         const {properties} = props.options;
-
         if( properties ) {
             (Object.keys(properties)).map((property, index) => {
                 this.emptyGroup[property] = properties[property].defaultValue?properties[property].defaultValue:'';
@@ -155,7 +154,7 @@ export default class Repeatable extends PureComponent {
 
     initialValue = () => {
         const {options, value} = this.props;
-				var currentValue = value?value:{};
+				var currentValue = value ? [...value] : [];
         if( options.min ){
             if( currentValue.length < options.min ){
                 for(var i=0; i<options.min;++i){
@@ -173,13 +172,13 @@ export default class Repeatable extends PureComponent {
 					}
 				}
 				if( currentValue.length > 0 ){
-					currentValue.forEach((val, key) => {
-						Object.keys(val).forEach((vv, kk)=> {
-							if( !this.emptyGroup.hasOwnProperty(vv) ){
-								delete currentValue[key][vv];
-							}
-						});
-					});
+					for(var key=0;key<currentValue.length; key++){
+						var test = {...currentValue[key]};
+						test = Object.keys(test).
+						filter((key) => this.emptyGroup.hasOwnProperty(key)).
+						reduce((cur, key) => { return Object.assign(cur, { [key]: test[key] })}, {});
+						currentValue[key] = test;
+					}
 				}
 				this.setState({currentValue: currentValue});
     };
@@ -297,7 +296,6 @@ export default class Repeatable extends PureComponent {
         const editorOptions = propertyDefinition.editorOptions?propertyDefinition.editorOptions:{};
         const editor = propertyDefinition.editor?propertyDefinition.editor:'Neos.Neos/Inspector/Editors/TextFieldEditor';
         let value = repeatableValue[idx][property]?repeatableValue[idx][property]:'';
-
         return (
             <Envelope
                 identifier={`repeatable-${idx}-${property}`}
@@ -325,6 +323,7 @@ export default class Repeatable extends PureComponent {
         const {options, i18nRegistry} = this.props;
         const {isLoading, allowAdd} = this.state;
 				const loadingLabel = i18nRegistry.translate('loading', 'Loading', [], 'Neos.Neos', 'Main');
+				const {buttonAddLabel = "Add row"} = options;
 
         if( !isLoading ){
             return (
@@ -334,7 +333,7 @@ export default class Repeatable extends PureComponent {
                         items={this.getValue()}
                         onSortEndAction={this.onSortAction}
                     />
-                    {options.controls.add && allowAdd?(<button type="button" onClick={() => this.handleAdd()} className={style.btn}>{options.buttonAddLabel}</button>):''}
+                    {options.controls.add && allowAdd?(<button type="button" onClick={() => this.handleAdd()} className={style.btn}>{buttonAddLabel}</button>):''}
                 </Fragment>
             );
         }else{

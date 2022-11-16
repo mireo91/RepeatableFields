@@ -2221,6 +2221,8 @@ var _neosUiBackendConnector2 = _interopRequireDefault(_neosUiBackendConnector);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2305,7 +2307,6 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
 
         var properties = props.options.properties;
 
-
         if (properties) {
             Object.keys(properties).map(function (property, index) {
                 _this.emptyGroup[property] = properties[property].defaultValue ? properties[property].defaultValue : '';
@@ -2327,6 +2328,9 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
                 allowAdd = _state.allowAdd;
 
             var loadingLabel = i18nRegistry.translate('loading', 'Loading', [], 'Neos.Neos', 'Main');
+            var _options$buttonAddLab = options.buttonAddLabel,
+                buttonAddLabel = _options$buttonAddLab === undefined ? "Add row" : _options$buttonAddLab;
+
 
             if (!isLoading) {
                 return _react2.default.createElement(
@@ -2342,7 +2346,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
                         { type: 'button', onClick: function onClick() {
                                 return _this3.handleAdd();
                             }, className: _style2.default.btn },
-                        options.buttonAddLabel
+                        buttonAddLabel
                     ) : ''
                 );
             } else {
@@ -2359,8 +2363,8 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
 }(_react.PureComponent), _class2.propTypes = {
     identifier: _propTypes2.default.string.isRequired,
     label: _propTypes2.default.string.isRequired,
-    options: _propTypes2.default.object,
-    value: _propTypes2.default.object,
+    // options: PropTypes.object,
+    value: _propTypes2.default.arrayOf(_propTypes2.default.object),
     renderSecondaryInspector: _propTypes2.default.func,
     editor: _propTypes2.default.string.isRequired,
     editorRegistry: _propTypes2.default.object.isRequired,
@@ -2372,44 +2376,44 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
     highlight: _propTypes2.default.bool,
 
     commit: _propTypes2.default.func.isRequired,
-    // options: PropTypes.shape({
-    // 	buttonAddLabel: PropTypes.string,
-    // 	// max: PropTypes.int,
-    // 	// min: PropTypes.int,
-    // 	controls: PropTypes.shape({
-    // 		move: PropTypes.bool,
-    // 		remove: PropTypes.bool,
-    // 		add: PropTypes.bool
-    // 	}),
-    //
-    // 	properties: PropTypes.objectOf(
-    // 		PropTypes.object()
-    // 	),
-    //
-    // 	placeholder: PropTypes.integersOnly,
-    // 	// disabled: PropTypes.bool,
-    // 	//
-    // 	// multiple: PropTypes.bool,
-    //
-    // 	dataSourceIdentifier: PropTypes.string,
-    // 	dataSourceUri: PropTypes.string,
-    // 	dataSourceDisableCaching: PropTypes.bool,
-    // 	dataSourceAdditionalData: PropTypes.objectOf(PropTypes.any),
-    //
-    // 	// minimumResultsForSearch: PropTypes.number,
-    //
-    // 	// values: PropTypes.objectOf(
-    // 	// 	PropTypes.shape({
-    // 	// 		label: PropTypes.string,
-    // 	// 		icon: PropTypes.string,
-    // 	// 		preview: PropTypes.string,
-    // 	//
-    // 	// 		// TODO
-    // 	// 		group: PropTypes.string
-    // 	// 	})
-    // 	// )
-    //
-    // }).isRequired,
+    options: _propTypes2.default.shape({
+        buttonAddLabel: _propTypes2.default.string
+        // 	// max: PropTypes.int,
+        // 	// min: PropTypes.int,
+        // 	controls: PropTypes.shape({
+        // 		move: PropTypes.bool,
+        // 		remove: PropTypes.bool,
+        // 		add: PropTypes.bool
+        // 	}),
+        //
+        // 	properties: PropTypes.objectOf(
+        // 		PropTypes.object()
+        // 	),
+        //
+        // 	placeholder: PropTypes.integersOnly,
+        // 	// disabled: PropTypes.bool,
+        // 	//
+        // 	// multiple: PropTypes.bool,
+        //
+        // 	dataSourceIdentifier: PropTypes.string,
+        // 	dataSourceUri: PropTypes.string,
+        // 	dataSourceDisableCaching: PropTypes.bool,
+        // 	dataSourceAdditionalData: PropTypes.objectOf(PropTypes.any),
+        //
+        // 	// minimumResultsForSearch: PropTypes.number,
+        //
+        // 	// values: PropTypes.objectOf(
+        // 	// 	PropTypes.shape({
+        // 	// 		label: PropTypes.string,
+        // 	// 		icon: PropTypes.string,
+        // 	// 		preview: PropTypes.string,
+        // 	//
+        // 	// 		// TODO
+        // 	// 		group: PropTypes.string
+        // 	// 	})
+        // 	// )
+        //
+    }).isRequired,
     dataSourcesDataLoader: _propTypes2.default.shape({
         resolveValue: _propTypes2.default.func.isRequired
     }).isRequired,
@@ -2431,7 +2435,7 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             options = _props2.options,
             value = _props2.value;
 
-        var currentValue = value ? value : {};
+        var currentValue = value ? [].concat(_toConsumableArray(value)) : [];
         if (options.min) {
             if (currentValue.length < options.min) {
                 for (var i = 0; i < options.min; ++i) {
@@ -2449,13 +2453,15 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             }
         }
         if (currentValue.length > 0) {
-            currentValue.forEach(function (val, key) {
-                Object.keys(val).forEach(function (vv, kk) {
-                    if (!_this4.emptyGroup.hasOwnProperty(vv)) {
-                        delete currentValue[key][vv];
-                    }
-                });
-            });
+            for (var key = 0; key < currentValue.length; key++) {
+                var test = _extends({}, currentValue[key]);
+                test = Object.keys(test).filter(function (key) {
+                    return _this4.emptyGroup.hasOwnProperty(key);
+                }).reduce(function (cur, key) {
+                    return Object.assign(cur, _defineProperty({}, key, test[key]));
+                }, {});
+                currentValue[key] = test;
+            }
         }
         _this4.setState({ currentValue: currentValue });
     };
@@ -2602,7 +2608,6 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
         var editorOptions = propertyDefinition.editorOptions ? propertyDefinition.editorOptions : {};
         var editor = propertyDefinition.editor ? propertyDefinition.editor : 'Neos.Neos/Inspector/Editors/TextFieldEditor';
         var value = repeatableValue[idx][property] ? repeatableValue[idx][property] : '';
-
         return _react2.default.createElement(_Envelope2.default, _extends({
             identifier: 'repeatable-' + idx + '-' + property
             // label={propertyDefinition.label?propertyDefinition.label:''}
@@ -2704,7 +2709,7 @@ var Sortable = (_temp2 = _class = function (_PureComponent) {
 
             var renderedItems = [];
             items.map(function (value, idx) {
-                renderedItems.push(_react2.default.createElement(SortableItem, { key: 'item-' + idx, index: idx, value: element(idx) }));
+                renderedItems.push(_react2.default.createElement(SortableItem, { key: 'item-' + idx, index: idx, collection: "zzzz", value: element(idx) }));
             });
 
             return renderedItems;
@@ -2721,7 +2726,7 @@ var Sortable = (_temp2 = _class = function (_PureComponent) {
                 null,
                 _react2.default.createElement(
                     SortableList,
-                    { onSortEnd: onSortEndAction, useDragHandle: true },
+                    { onSortEnd: onSortEndAction, useDragHandle: true, axis: 'y', lockAxis: 'y' },
                     this.createItems()
                 )
             );

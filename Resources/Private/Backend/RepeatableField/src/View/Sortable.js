@@ -30,7 +30,7 @@ export default class Sortable extends PureComponent{
         let renderedItems = [];
         items.map((value, idx) => {
             renderedItems.push(
-                <SortableItem key={`item-${idx}`} index={idx} value={element(idx)} />
+                <SortableItem key={`item-${idx}`} index={idx} collection={"zzzz"} value={element(idx)} />
             )
         });
 
@@ -41,7 +41,7 @@ export default class Sortable extends PureComponent{
         const {onSortEndAction} = this.props;
         return (
             <Fragment>
-                <SortableList onSortEnd={onSortEndAction} useDragHandle>
+                <SortableList onSortEnd={onSortEndAction} useDragHandle axis="y" lockAxis="y">
                     {this.createItems()}
                 </SortableList>
             </Fragment>
