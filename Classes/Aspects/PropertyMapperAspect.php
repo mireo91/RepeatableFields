@@ -56,12 +56,11 @@ class PropertyMapperAspect
                 $configuration->setTypeConverterOption('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'context', $node->getContext());
                 $properties = $nodeType->getConfiguration("properties.${explodedPropertyName[0]}.ui.inspector.editorOptions.properties");
                 $configuration->setTypeConverterOption('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'properties', $properties);
-
                 /** @var Repeatable $value */
                 $value = $this->propertyMapper->convert($value, $expectedPropertyType, $configuration);
-
                 if (isset($explodedPropertyName[1])) {
-                    return $value->getByFields($explodedPropertyName[1]);
+                    array_shift($explodedPropertyName);
+                    return $value->offsetGet(implode(".",$explodedPropertyName));
                 }else{
                     return $value;
                 }

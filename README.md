@@ -46,7 +46,11 @@ Create property with type `reapeatable`.
 
 ## Nested
 
-In fusion you can get data by path  `q(node).property('repetableProperty.field1')` so you get nested data form specific repeatable field
+In fusion you can get data by path  `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field
+
+## Important changes between v1.x.x
+
+Right now when you want to uprade to v2.x.x be aware that you may need to adjust some fusion because of better property mapping of object type fileds 
 
 ## Issues
 

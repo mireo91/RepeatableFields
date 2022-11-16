@@ -8,6 +8,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Neos\Ui\Domain\Service\NodePropertyConversionService;
+use Neos\Utility\Arrays;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
@@ -57,35 +58,11 @@ class RepeatableConverter extends AbstractTypeConverter
     {
         $context = $configuration->getConfigurationValue('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'context');
         $properties = $configuration->getConfigurationValue('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'properties');
-        $convertedProps = [];
-        $byIndexes = [];
-        if( $source && $context && $properties ) {
-            if (!is_array($source)) {
-                $source = json_decode($source, true) ?? [];
-            }
-            if (isset($source['byGroup'])) {
-                $source = $source['byGroup'];
-            }
-            foreach ($source as $key => $group) {
-                foreach ($group as $index => $val) {
-                    if ( isset($val) && $val!=="" ) {
-                        $conf = $properties[$index]??null;
-                        $targ = $conf['type'] ?? 'string';
-                        $nodeType = new NodeType('test',[],[], [
-                            'properties' => [$index => [ 'type' => $targ ]]
-                        ]);
 
-                        $v = $this->nodePropertyConversionService->convert($nodeType, $index, $val, $context);
-                        $byIndexes[$index][] = $v;
-                    } else {
-                        $v = $val;
-                    }
-                    $convertedProps[$key][$index] = $v;
-                }
-            }
-        }
-        $repeatable = new Repeatable($convertedProps, $byIndexes, $source);
-
+        $repeatable = new Repeatable($source, $context, $properties);
+//        \Neos\Flow\var_dump(Arrays::getValueByPath($repeatable, "."));
+//        \Neos\Flow\var_dump(is_array($repeatable));
+//        \Neos\Flow\var_dump($repeatable[0]);exit;
         return $repeatable;
     }
 

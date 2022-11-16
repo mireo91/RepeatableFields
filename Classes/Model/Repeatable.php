@@ -1,13 +1,24 @@
 <?php
 namespace Mireo\RepeatableFields\Model;
 
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Neos\Ui\Domain\Service\NodePropertyConversionService;
+use Neos\Utility\Arrays;
+
 /**
  * Repeatable
  *
  * @api
  */
-class Repeatable implements \Iterator, \JsonSerializable, \Countable {
+class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAccess {
+
+    /**
+     * @Flow\Inject
+     * @var NodePropertyConversionService
+     */
+    protected $nodePropertyConversionService;
 
     /**
      * @var array
@@ -29,10 +40,63 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable {
      */
     private $position = 0;
 
-    public function __construct($byGroups, $byFields, $source) {
-        $this->byGroups = $byGroups;
-        $this->byFields = $byFields;
+    /**
+     * @var ContentContext
+     */
+    private $context;
+
+    /**
+     * @var array
+     */
+    private $proprties;
+
+    public function __construct($source, $context, $properties) {
+        $this->proprties = $properties;
+        $this->context = $context;
         $this->source = $source;
+    }
+
+    public function initializeObject(){
+        $source = $this->source;
+        $context = $this->context;
+        $properties = $this->proprties;
+        $convertedProps = [];
+        $byIndexes = [];
+        if( $source && $context && $properties ) {
+            if (!is_array($source)) {
+                $source = json_decode($source, true) ?? [];
+            }
+            if (isset($source['byGroup'])) {
+                $source = $source['byGroup'];
+            }
+            foreach ($source as $key => $group) {
+                foreach ($group as $index => $val) {
+                    if ( isset($val) && $val!=="" ) {
+                        $conf = $properties[$index]??null;
+                        $targ = $conf['type'] ?? 'string';
+
+                        if( $targ == "repeatable"){
+                            $v = new Repeatable($val, $context, $conf["editorOptions"]);
+//                            \Neos\Flow\var_dump($v);exit;
+                        }else{
+                            $propConf = [
+                                'properties' => [$index => [ 'type' => $targ ]]
+                            ];
+                            $nodeType = new NodeType('test',[],$propConf);
+                            $nodeType->getFullConfiguration();
+                            $v = $this->nodePropertyConversionService->convert($nodeType, $index, $val, $context);
+                        }
+//                        $byIndexes[$index][] = $v;
+                    } else {
+                        $v = $val;
+                    }
+                    $byIndexes[$index][] = $v;
+                    $convertedProps[$key][$index] = $v;
+                }
+            }
+        }
+        $this->byGroups = $convertedProps;
+        $this->byFields = $byIndexes;
     }
 
     /**
@@ -43,18 +107,19 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable {
     }
 
     /**
-     * @return array
+     * @param string $fieldPath
+     * @return mixed
      */
-    public function getByGroups(): array{
-        return $this->byGroups;
+    public function getByGroups($fieldPath = null): mixed{
+        return Arrays::getValueByPath($this->byGroups, $fieldPath);
     }
 
     /**
-     * @param string $field
-     * @return array
+     * @param string $fieldPath
+     * @return mixed
      */
-    public function getByFields($field = null): array{
-        return isset($this->byFields[$field])?$this->byFields[$field]:[];
+    public function getByFields($fieldPath = null): mixed{
+        return Arrays::getValueByPath($this->byFields, $fieldPath);
     }
 
     public function count(): int{
@@ -122,9 +187,39 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable {
     public function toArray(){
         return $this->source;
     }
-    
+
     public function __toString()
    {
        return json_encode($this->source);
    }
+
+    private function testFieldType($offset){
+        return is_numeric($offset) ? true : false;
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return true;
+    }
+
+    public function offsetGet(mixed $offset): mixed
+    {
+        $offset = explode(".", $offset);
+        if( $this->testFieldType($offset[0]) ){
+            return $this->getByGroups($offset);
+        }else{
+            return $this->getByFields($offset);
+        }
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        // TODO: Implement offsetSet() method.
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        Arrays::unsetValueByPath($this->source, $offset);
+        // TODO: Implement offsetUnset() method.
+    }
 }
