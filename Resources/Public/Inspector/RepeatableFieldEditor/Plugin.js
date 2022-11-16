@@ -2612,9 +2612,9 @@ var Repeatable = (_dec = (0, _neosUiDecorators.neos)(function (globalRegistry) {
             identifier: 'repeatable-' + idx + '-' + property
             // label={propertyDefinition.label?propertyDefinition.label:''}
             , options: editorOptions,
-            value: value
-            // renderSecondaryInspector={this.props.renderSecondaryInspector}
-            , editor: editor,
+            value: value,
+            renderSecondaryInspector: _this4.props.renderSecondaryInspector,
+            editor: editor,
             editorRegistry: _this4.props.editorRegistry,
             i18nRegistry: _this4.props.i18nRegistry,
             validationErrors: _this4.validateElement(value, propertyDefinition, idx, property),
