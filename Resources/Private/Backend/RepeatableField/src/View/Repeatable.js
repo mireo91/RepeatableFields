@@ -12,7 +12,7 @@ import { $get, $set, $transform, $merge } from "plow-js";
 
 import style from "../style.css";
 import { SortableHandle } from "react-sortable-hoc";
-import arrayMove from "array-move";
+import { arrayMoveImmutable } from "array-move";
 import backend from "@neos-project/neos-ui-backend-connector";
 
 // const getDataLoaderOptionsForProps = props => ({
@@ -355,7 +355,9 @@ export default class Repeatable extends PureComponent {
   };
 
   onSortAction = ({ oldIndex, newIndex }) => {
-    this.handleValueChange(arrayMove(this.getValue(), oldIndex, newIndex));
+    this.handleValueChange(
+      arrayMoveImmutable(this.getValue(), oldIndex, newIndex)
+    );
   };
 
   render() {
