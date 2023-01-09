@@ -330,27 +330,29 @@ export default class Repeatable extends PureComponent {
       ? repeatableValue[idx][property]
       : "";
     return (
-      <Envelope
-        identifier={`repeatable-${idx}-${property}`}
-        // label={propertyDefinition.label?propertyDefinition.label:''}
-        options={editorOptions}
-        value={value}
-        renderSecondaryInspector={this.props.renderSecondaryInspector}
-        editor={editor}
-        editorRegistry={this.props.editorRegistry}
-        i18nRegistry={this.props.i18nRegistry}
-        validationErrors={this.validateElement(
-          value,
-          propertyDefinition,
-          idx,
-          property
-        )}
-        highlight={false}
-        property={`${idx}.${property}`}
-        id={`repeatable-${idx}-${property}`}
-        commit={this.commitChange}
-        {...propertyDefinition}
-      />
+      <div className={style.property}>
+        <Envelope
+          identifier={`repeatable-${idx}-${property}`}
+          // label={propertyDefinition.label?propertyDefinition.label:''}
+          options={editorOptions}
+          value={value}
+          renderSecondaryInspector={this.props.renderSecondaryInspector}
+          editor={editor}
+          editorRegistry={this.props.editorRegistry}
+          i18nRegistry={this.props.i18nRegistry}
+          validationErrors={this.validateElement(
+            value,
+            propertyDefinition,
+            idx,
+            property
+          )}
+          highlight={false}
+          property={`${idx}.${property}`}
+          id={`repeatable-${idx}-${property}`}
+          commit={this.commitChange}
+          {...propertyDefinition}
+        />
+      </div>
     );
   };
 
