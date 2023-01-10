@@ -1,0 +1,5 @@
+node_modules
+.thumbs
+.idea
+.vscode
+.DS_Store
