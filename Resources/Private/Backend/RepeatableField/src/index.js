@@ -1,2 +1,1 @@
-require('./manifest');
-
+require("./manifest");

@@ -1,84 +1,51 @@
-.repeatable-wrapper{
+.wrapper {
     position: relative;
-    display: inline-block;
-    width: 100%;
-    text-align: center;
+    margin-bottom: 10px;
+    background: #141414;
+    border: 1px dashed #323232;
+    border-radius: 2px;
+    padding: 10px
+}
+
+.property {
+  margin-top: 10px;
+}
+
+.buttons {
     display: flex;
-    margin-bottom: 5px;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 14px;
+    gap: 10px;
+
+    & > * {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      min-width: 40px;
+      background-color: #323232;
+    }
+
+    &:empty {
+      display: none
+    }
 }
 
-.repeatable-field-wrapper{
-    width: 100%;
-    max-width: 230px;
-}
-
-.btn{
-    margin:auto!important;
-    position: relative;
-    height: 40px;
-    min-width: 40px;
-    padding: 0 16px;
-    border: 0;
-    -webkit-font-smoothing: antialiased;
-    vertical-align: middle;
-    width: auto;
-    color: #FFF;
+.delete {
     cursor: pointer;
-    background-color: #323232;
-    font-size: 14px;
 
-    /*&:hover:enabled{*/
-        /*background-color: #ff460d!important;*/
-    /*}*/
-
-    &.btn--wide{
-        margin:10px 0 10px 0!important;
-        width: 100%;
+    &:hover {
+        background-color: #ff460d !important;
     }
 }
 
-.btn-delete{
-    margin:auto!important;
-    margin-left: 10px!important;
-    position: relative;
-    height: 40px;
-    min-width: 20px;
-    padding: 0 0px;
-    border: 0;
-    -webkit-font-smoothing: antialiased;
-    vertical-align: middle;
-    width: auto;
-    color: #FFF;
-    cursor: pointer;
-    background-color: #323232;
-    font-size: 14px;
-
-    &:hover:enabled{
-        background-color: #ff460d!important;
-    }
-
-    &.btn--wide{
-         margin:10px 0 10px 0!important;
-        width: 100%;
-    }
-}
-
-.btn-move{
-    margin:auto!important;
-    position: relative;
-    height: 40px;
-    min-width: 20px;
-    padding: 0 0px;
-    border: 0;
-    -webkit-font-smoothing: antialiased;
-    vertical-align: middle;
-    width: auto;
-    color: #FFF;
-    background-color: #3f3f3f;
-    font-size: 14px;
-
-    display: inline-grid;
+.move {
+    flex: 1;
     cursor: row-resize;
-    align-items: center;
-}
 
+    &:hover {
+      background-color: #3f3f3f;
+  }
+}
