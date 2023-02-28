@@ -317,7 +317,7 @@ export default class Repeatable extends PureComponent {
 
     if (defaultDataType) {
       const merge = require("lodash.merge");
-      propertyDefinition = merge(defaultDataType, propertyDefinition);
+      merge(propertyDefinition, defaultDataType);
     }
 
     const editorOptions = propertyDefinition.editorOptions
