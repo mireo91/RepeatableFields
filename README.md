@@ -21,6 +21,12 @@ Create property with type `reapeatable`.
         inspector:
           group: document
           editorOptions:
+#            you can use data source to dynamically set editorOptions (example: {defaultValues: [...]}) 
+#            dataSourceUri: "" 
+#            dataSourceIdentifier: 
+#            dataSourceDisableCaching: false
+#            dataSourceAdditionalData:
+#              apiKey: 'foo-bar-baz'
             buttonAddLabel: 'Add row' #default lable
             max: 100 #default max
             min: 0   #default min
@@ -28,12 +34,17 @@ Create property with type `reapeatable`.
               move: true
               remove: true
               add: true
+            defaultValues: # default not set
+              - field0: defalut value for index 0 field0
+                field1: default value for index 0 field1
+              - field0: default value for index 1 field0
+#                ...
             properties:
               filed0:
                 editorOptions:
                   placeholder: 'default field editor'
               field1:
-              	type: Neos\Media\Domain\Model\ImageInterface #type for property mapper
+              	type: 'Neos\Media\Domain\Model\ImageInterface' #type for property mapper
                 label: 'Image field'
                 editorOptions:
                   placeholder: 'placeholder test'
@@ -46,7 +57,7 @@ Create property with type `reapeatable`.
 
 ## Nested
 
-In fusion you can get data by path  `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field
+In fusion you can get data by path  `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field  
 
 ## Important changes between v1.x.x
 

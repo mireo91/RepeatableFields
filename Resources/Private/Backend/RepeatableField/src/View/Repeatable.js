@@ -8,20 +8,21 @@ import { selectors } from "@neos-project/neos-ui-redux-store";
 import I18n from "@neos-project/neos-ui-i18n";
 import { neos } from "@neos-project/neos-ui-decorators";
 import { IconButton, Icon, Button } from "@neos-project/react-ui-components";
-import { $get, $set, $transform, $merge } from "plow-js";
+import { $get, $set, $transform } from "plow-js";
 
 import style from "../style.css";
 import { SortableHandle } from "react-sortable-hoc";
 import { arrayMoveImmutable } from "array-move";
 import backend from "@neos-project/neos-ui-backend-connector";
+import merge from "lodash.merge";
 
-// const getDataLoaderOptionsForProps = props => ({
-// 	contextNodePath: props.focusedNodePath,
-// 	dataSourceIdentifier: props.options.dataSourceIdentifier,
-// 	// dataSourceUri: props.options.dataSourceUri,
-// 	dataSourceAdditionalData: props.options.dataSourceAdditionalData,
-// 	dataSourceDisableCaching: Boolean(props.options.dataSourceDisableCaching)
-// });
+const getDataLoaderOptionsForProps = props => ({
+	contextNodePath: props.focusedNodePath,
+	dataSourceIdentifier: props.options.dataSourceIdentifier,
+	dataSourceUri: props.options.dataSourceUri,
+	dataSourceAdditionalData: props.options.dataSourceAdditionalData,
+	dataSourceDisableCaching: Boolean(props.options.dataSourceDisableCaching)
+});
 @neos((globalRegistry) => ({
   editorRegistry: globalRegistry.get("inspector").get("editors"),
   i18nRegistry: globalRegistry.get("i18n"),
@@ -40,6 +41,7 @@ export default class Repeatable extends PureComponent {
     allowAdd: true,
     allowRemove: true,
     isLoading: true,
+		options: {},
     currentValue: [],
   };
 
@@ -61,6 +63,10 @@ export default class Repeatable extends PureComponent {
     commit: PropTypes.func.isRequired,
     options: PropTypes.shape({
       buttonAddLabel: PropTypes.string,
+			dataSourceIdentifier: PropTypes.string,
+			dataSourceUri: PropTypes.string,
+			dataSourceDisableCaching: PropTypes.bool,
+			dataSourceAdditionalData: PropTypes.objectOf(PropTypes.any),
       // 	// max: PropTypes.int,
       // 	// min: PropTypes.int,
       // 	controls: PropTypes.shape({
@@ -104,63 +110,70 @@ export default class Repeatable extends PureComponent {
   };
 
   componentDidMount() {
-    backend
-      .get()
-      .endpoints.dataSource("get-property-types", null, {})
-      .then((json) => {
-        // this.loadSelectBoxOptions();
-        this.initialValue();
-        const value = this.getValue();
-        this.testIfAdd(value);
-        this.testIfRemove(value);
-        this.setState({ dataTypes: json, isLoading: false });
-      });
+		this.loadRepeatableOptions(() => {
+			this.setState({ isLoading: true });
+			backend
+				.get()
+				.endpoints.dataSource("get-property-types", null, {})
+				.then((json) => {
+					this.initialValue();
+					const value = this.getValue();
+					this.testIfAdd(value);
+					this.testIfRemove(value);
+					this.setState({ dataTypes: json, isLoading: false });
+				});
+		});
   }
-
-  // componentDidMount() {
-  // 	this.loadSelectBoxOptions();
-  // }
 
   componentDidUpdate(prevProps) {
+		const init = () => {
+			if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
+				this.initialValue();
+			}
+		};
     // if our data loader options have changed (e.g. due to use of ClientEval), we want to re-initialize the data source.
-    // if (JSON.stringify(getDataLoaderOptionsForProps(this.props)) !== JSON.stringify(getDataLoaderOptionsForProps(prevProps))) {
-    // 	this.loadSelectBoxOptions();
-    // }
-    if (JSON.stringify(this.props.value) !== JSON.stringify(prevProps.value)) {
-      this.initialValue();
-    }
+    if (JSON.stringify(getDataLoaderOptionsForProps(this.props)) !== JSON.stringify(getDataLoaderOptionsForProps(prevProps))) {
+    	this.loadRepeatableOptions(() => {
+				init();
+			});
+    }else{
+			init();
+		}
+
   }
 
-  // loadSelectBoxOptions() {
-  // 	if( !this.props.options.dataSourceIdentifier )
-  // 		return;
-  // 	this.setState({isLoading: true});
-  // 	this.props.dataSourcesDataLoader.resolveValue(getDataLoaderOptionsForProps(this.props), this.getValue())
-  // 		.then(selectBoxOptions => {
-  // 			console.log(selectBoxOptions);
-  // 			this.setState({
-  // 				isLoading: false,
-  // 				// dataSourceConf: selectBoxOptions
-  // 				// selectBoxOptions
-  // 			});
-  // 		});
-  // }
+  loadRepeatableOptions(callback) {
+		this.setState({isLoading: true});
+		if (this.props.options.dataSourceIdentifier || this.props.options.dataSourceUri) {
+			this.props.dataSourcesDataLoader.resolveValue(getDataLoaderOptionsForProps(this.props), this.getValue())
+				.then(selectBoxOptions => {
+					merge(this.props.options, selectBoxOptions);
+					callback();
+					this.setState({isLoading: false});
+				});
+			return;
+		}
+		callback();
+  }
 
   constructor(props) {
     super(props);
-    const { properties } = props.options;
-    if (properties) {
-      Object.keys(properties).map((property, index) => {
-        this.emptyGroup[property] = properties[property].defaultValue
-          ? properties[property].defaultValue
-          : "";
-      });
-    }
+		this.loadRepeatableOptions(() => {
+			const { properties } = props.options;
+			if (properties) {
+				Object.keys(properties).map((property, index) => {
+					this.emptyGroup[property] = properties[property].defaultValue
+						? properties[property].defaultValue
+						: "";
+				});
+			}
+		});
   }
 
   initialValue = () => {
     const { options, value } = this.props;
     var currentValue = value ? [...value] : [];
+
     if (options.min) {
       if (currentValue.length < options.min) {
         for (var i = 0; i < options.min; ++i) {
@@ -177,13 +190,18 @@ export default class Repeatable extends PureComponent {
         currentValue = currentValue.slice(0, options.max);
       }
     }
+
     if (currentValue.length > 0) {
       for (var key = 0; key < currentValue.length; key++) {
         var test = { ...currentValue[key] };
         test = Object.keys(test)
           .filter((key) => this.emptyGroup.hasOwnProperty(key))
-          .reduce((cur, key) => {
-            return Object.assign(cur, { [key]: test[key] });
+          .reduce((cur, keyname) => {
+						var source = { [keyname]: test[keyname] };
+						if( options.defaultValues && options.defaultValues[key] && options.defaultValues[key].hasOwnProperty(keyname) ){
+							source[keyname] = options.defaultValues[key][keyname];
+						}
+            return Object.assign(cur, source);
           }, {});
         currentValue[key] = test;
       }
@@ -316,7 +334,6 @@ export default class Repeatable extends PureComponent {
       : {};
 
     if (defaultDataType) {
-      const merge = require("lodash.merge");
       merge(propertyDefinition, defaultDataType);
     }
 
