@@ -41,7 +41,6 @@ export default class Repeatable extends PureComponent {
     allowAdd: true,
     allowRemove: true,
     isLoading: true,
-		options: {},
     currentValue: [],
   };
 
@@ -126,28 +125,21 @@ export default class Repeatable extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-		const init = () => {
-			if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
-				this.initialValue();
-			}
-		};
     // if our data loader options have changed (e.g. due to use of ClientEval), we want to re-initialize the data source.
-    if (JSON.stringify(getDataLoaderOptionsForProps(this.props)) !== JSON.stringify(getDataLoaderOptionsForProps(prevProps))) {
+    if (JSON.stringify(this.props.options) !== JSON.stringify(prevProps.options)) {
     	this.loadRepeatableOptions(() => {
-				init();
+				this.initialValue();
 			});
-    }else{
-			init();
-		}
+    }
 
   }
 
   loadRepeatableOptions(callback) {
-		this.setState({isLoading: true});
 		if (this.props.options.dataSourceIdentifier || this.props.options.dataSourceUri) {
+			this.setState({isLoading: true});
 			this.props.dataSourcesDataLoader.resolveValue(getDataLoaderOptionsForProps(this.props), this.getValue())
 				.then(selectBoxOptions => {
-					merge(this.props.options, selectBoxOptions);
+					this.props.options = merge(JSON.parse(JSON.stringify(this.props.options)), selectBoxOptions);
 					callback();
 					this.setState({isLoading: false});
 				});
