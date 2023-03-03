@@ -66,13 +66,17 @@ export default class Repeatable extends PureComponent {
 			dataSourceUri: PropTypes.string,
 			dataSourceDisableCaching: PropTypes.bool,
 			dataSourceAdditionalData: PropTypes.objectOf(PropTypes.any),
-      // 	// max: PropTypes.int,
-      // 	// min: PropTypes.int,
-      // 	controls: PropTypes.shape({
-      // 		move: PropTypes.bool,
-      // 		remove: PropTypes.bool,
-      // 		add: PropTypes.bool
-      // 	}),
+			predefinedProperties: PropTypes.arrayOf(PropTypes.shape({
+				label: PropTypes.string,
+				value: PropTypes.object
+			})),
+			max: PropTypes.number,
+			min: PropTypes.number,
+			controls: PropTypes.shape({
+				move: PropTypes.bool,
+				remove: PropTypes.bool,
+				add: PropTypes.bool
+			}),
       //
       // 	properties: PropTypes.objectOf(
       // 		PropTypes.object()
@@ -90,16 +94,16 @@ export default class Repeatable extends PureComponent {
       //
       // 	// minimumResultsForSearch: PropTypes.number,
       //
-      // 	// values: PropTypes.objectOf(
-      // 	// 	PropTypes.shape({
-      // 	// 		label: PropTypes.string,
-      // 	// 		icon: PropTypes.string,
-      // 	// 		preview: PropTypes.string,
-      // 	//
-      // 	// 		// TODO
-      // 	// 		group: PropTypes.string
-      // 	// 	})
-      // 	// )
+			// properties: PropTypes.objectOf(
+			// 	PropTypes.shape({
+			// 		label: PropTypes.string,
+			// 		icon: PropTypes.string,
+			// 		preview: PropTypes.string,
+			//
+			// 		// TODO
+			// 		group: PropTypes.string
+			// 	})
+			// )
       //
     }).isRequired,
     dataSourcesDataLoader: PropTypes.shape({
@@ -190,8 +194,8 @@ export default class Repeatable extends PureComponent {
           .filter((key) => this.emptyGroup.hasOwnProperty(key))
           .reduce((cur, keyname) => {
 						var source = { [keyname]: test[keyname] };
-						if( options.defaultValues && options.defaultValues[key] && options.defaultValues[key].hasOwnProperty(keyname) ){
-							source[keyname] = options.defaultValues[key][keyname];
+						if( options.predefinedProperties[key] && options.predefinedProperties[key].value && options.predefinedProperties[key].value.hasOwnProperty(keyname) ){
+							source[keyname] = options.predefinedProperties[key].value[keyname];
 						}
             return Object.assign(cur, source);
           }, {});
@@ -307,12 +311,18 @@ export default class Repeatable extends PureComponent {
   };
 
   getProperties = (idx) => {
+		const groupLabel = this.props.options.predefinedProperties[idx]?this.props.options.predefinedProperties[idx].label:null;
     let properties = [];
     // console.log('getProperties');
     Object.keys(this.emptyGroup).map((property, index) => {
       properties.push(this.getProperty(property, idx));
     });
-    return properties;
+    return (
+			<div className="group">
+				{groupLabel ? groupLabel : ""}
+				{properties}
+			</div>
+		);
   };
 
   getProperty = (property, idx) => {
@@ -339,7 +349,7 @@ export default class Repeatable extends PureComponent {
       ? repeatableValue[idx][property]
       : "";
     return (
-      <div className={style.property}>
+      <div className={style.property} hidden={propertyDefinition.hidden}>
         <Envelope
           identifier={`repeatable-${idx}-${property}`}
           // label={propertyDefinition.label?propertyDefinition.label:''}

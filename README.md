@@ -21,7 +21,7 @@ Create property with type `reapeatable`.
         inspector:
           group: document
           editorOptions:
-#            you can use data source to dynamically set editorOptions (example: {defaultValues: [...]}) 
+#            you can use data source to dynamically set editorOptions (example: {predefinedProperties: [...]}) 
 #            dataSourceUri: "" 
 #            dataSourceIdentifier: 
 #            dataSourceDisableCaching: false
@@ -34,10 +34,15 @@ Create property with type `reapeatable`.
               move: true
               remove: true
               add: true
-            defaultValues: # default not set
-              - field0: defalut value for index 0 field0
-                field1: default value for index 0 field1
-              - field0: default value for index 1 field0
+            predefinedProperties:
+              - label: Group label
+                value:
+                  field0: defalut value for index 0 field0
+                  field1: defalut value for index 0 field1
+              - value:
+                  field0: defalut value for index 1 field0
+              - value:
+                  field0: defalut value for index 2 field0
 #                ...
             properties:
               filed0:
