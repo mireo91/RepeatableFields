@@ -30,6 +30,7 @@ Create property with type `reapeatable`.
             buttonAddLabel: 'Add row' #default lable
             max: 100 #default max
             min: 0   #default min
+            indexKey: field0 # when setn nested data are not available but you can get data like (.property("repeatableProperty.[value of field0].field1"))
             controls:  #default all set to true
               move: true
               remove: true

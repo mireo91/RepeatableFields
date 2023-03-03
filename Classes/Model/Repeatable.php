@@ -70,9 +70,12 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
                 $source = $source['byGroup'];
             }
             foreach ($source as $key => $group) {
+                $indexKey = null;
+                if( isset($properties["indexKey"]) )
+                    $indexKey = $group[$properties["indexKey"]];
                 foreach ($group as $index => $val) {
                     if ( isset($val) && $val!=="" ) {
-                        $conf = $properties[$index]??null;
+                        $conf = $properties["properties"][$index]??null;
                         $targ = $conf['type'] ?? 'string';
 
                         if( $targ == "repeatable"){
@@ -90,11 +93,15 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
                     } else {
                         $v = $val;
                     }
-                    $byIndexes[$index][] = $v;
+                    if( $indexKey == null )
+                        $byIndexes[$index][] = $v;
+                    else
+                        $byIndexes[$indexKey][$index] = $v;
                     $convertedProps[$key][$index] = $v;
                 }
             }
         }
+//        \Neos\Flow\var_dump($byIndexes);exit;
         $this->byGroups = $convertedProps;
         $this->byFields = $byIndexes;
     }

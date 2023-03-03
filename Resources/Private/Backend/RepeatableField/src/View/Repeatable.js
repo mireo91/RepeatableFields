@@ -311,7 +311,7 @@ export default class Repeatable extends PureComponent {
   };
 
   getProperties = (idx) => {
-		const groupLabel = this.props.options.predefinedProperties[idx]?this.props.options.predefinedProperties[idx].label:null;
+		const groupLabel = this.props.options.predefinedProperties && this.props.options.predefinedProperties[idx] ? this.props.options.predefinedProperties[idx].label : null;
     let properties = [];
     // console.log('getProperties');
     Object.keys(this.emptyGroup).map((property, index) => {
