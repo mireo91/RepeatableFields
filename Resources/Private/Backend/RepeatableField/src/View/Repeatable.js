@@ -194,7 +194,7 @@ export default class Repeatable extends PureComponent {
           .filter((key) => this.emptyGroup.hasOwnProperty(key))
           .reduce((cur, keyname) => {
 						var source = { [keyname]: test[keyname] };
-						if( options.predefinedProperties[key] && options.predefinedProperties[key].value && options.predefinedProperties[key].value.hasOwnProperty(keyname) ){
+						if( options.predefinedProperties && options.predefinedProperties[key] && options.predefinedProperties[key].value && options.predefinedProperties[key].value.hasOwnProperty(keyname) ){
 							source[keyname] = options.predefinedProperties[key].value[keyname];
 						}
             return Object.assign(cur, source);
