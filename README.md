@@ -37,13 +37,19 @@ Create property with type `reapeatable`.
               add: true
             predefinedProperties:
               - label: Group label
-                value:
-                  field0: defalut value for index 0 field0
-                  field1: defalut value for index 0 field1
+                properties:
+                  field0:
+                    defaultValue: defalut value for index 0 field0
+                    editorOptions:
+                      readonly: true
+                  field1:
+                    defaultValue: defalut value for index 0 field1 
               - value:
-                  field0: defalut value for index 1 field0
+                  field0: 
+                    defaultValue: defalut value for index 1 field0
               - value:
-                  field0: defalut value for index 2 field0
+                  field0:
+                    defaultValue: defalut value for index 2 field0
 #                ...
             properties:
               filed0:

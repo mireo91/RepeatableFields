@@ -130,7 +130,7 @@ export default class Repeatable extends PureComponent {
 
   componentDidUpdate(prevProps) {
     // if our data loader options have changed (e.g. due to use of ClientEval), we want to re-initialize the data source.
-    if (JSON.stringify(this.props.options) !== JSON.stringify(prevProps.options)) {
+    if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
     	this.loadRepeatableOptions(() => {
 				this.initialValue();
 			});
@@ -194,8 +194,11 @@ export default class Repeatable extends PureComponent {
           .filter((key) => this.emptyGroup.hasOwnProperty(key))
           .reduce((cur, keyname) => {
 						var source = { [keyname]: test[keyname] };
-						if( options.predefinedProperties && options.predefinedProperties[key] && options.predefinedProperties[key].value && options.predefinedProperties[key].value.hasOwnProperty(keyname) ){
-							source[keyname] = options.predefinedProperties[key].value[keyname];
+						if( options.predefinedProperties && options.predefinedProperties[key]
+							&& options.predefinedProperties[key].properties
+							&& options.predefinedProperties[key].properties.hasOwnProperty(keyname)
+							&& options.predefinedProperties[key].properties[keyname].defaultValue ){
+							source[keyname] = options.predefinedProperties[key].properties[keyname].defaultValue;
 						}
             return Object.assign(cur, source);
           }, {});
@@ -281,6 +284,7 @@ export default class Repeatable extends PureComponent {
   createElement = (idx) => {
     const { options } = this.props;
     const { allowRemove, currentValue } = this.state;
+		const isPredefined = options.predefinedProperties && options.predefinedProperties[idx]?true:false;
     const DragHandle = SortableHandle(() => (
       <span type="button" className={style.move}>
         <Icon icon="sort" />
@@ -290,12 +294,12 @@ export default class Repeatable extends PureComponent {
     return (
       <div className={style.wrapper}>
         <div class={style.buttons}>
-          {options.controls.move && currentValue.length > 1 ? (
+          {!isPredefined && options.controls.move && currentValue.length > 1 ? (
             <DragHandle />
           ) : (
             ""
           )}
-          {options.controls.remove && allowRemove ? (
+          {!isPredefined && options.controls.remove && allowRemove ? (
             <IconButton
               onClick={() => this.handleRemove(idx)}
               className={style.delete}
@@ -313,13 +317,13 @@ export default class Repeatable extends PureComponent {
   getProperties = (idx) => {
 		const groupLabel = this.props.options.predefinedProperties && this.props.options.predefinedProperties[idx] ? this.props.options.predefinedProperties[idx].label : null;
     let properties = [];
-    // console.log('getProperties');
     Object.keys(this.emptyGroup).map((property, index) => {
       properties.push(this.getProperty(property, idx));
     });
     return (
 			<div className="group">
-				{groupLabel ? groupLabel : ""}
+				<td dangerouslySetInnerHTML={{__html: this.state.actions}} />
+				{groupLabel ? <span dangerouslySetInnerHTML={{__html: groupLabel}}/> : ""}
 				{properties}
 			</div>
 		);
@@ -331,6 +335,12 @@ export default class Repeatable extends PureComponent {
     // console.log('getProperty');
     const repeatableValue = this.getValue();
     let propertyDefinition = this.props.options.properties[property];
+		if( this.props.options.predefinedProperties && this.props.options.predefinedProperties[idx]
+			&& this.props.options.predefinedProperties[idx]["properties"]
+			&& this.props.options.predefinedProperties[idx]["properties"][property] ) {
+			propertyDefinition = merge(JSON.parse(JSON.stringify(propertyDefinition)), this.props.options.predefinedProperties[idx]["properties"][property]);
+			console.log(idx, property, propertyDefinition, this.props.options.predefinedProperties[idx]["properties"][property]);
+		}
     const defaultDataType = propertyDefinition.type
       ? dataTypes[propertyDefinition.type]
       : {};
