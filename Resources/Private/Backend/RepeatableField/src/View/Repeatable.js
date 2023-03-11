@@ -339,7 +339,7 @@ export default class Repeatable extends PureComponent {
 			&& this.props.options.predefinedProperties[idx]["properties"]
 			&& this.props.options.predefinedProperties[idx]["properties"][property] ) {
 			propertyDefinition = merge(JSON.parse(JSON.stringify(propertyDefinition)), this.props.options.predefinedProperties[idx]["properties"][property]);
-			console.log(idx, property, propertyDefinition, this.props.options.predefinedProperties[idx]["properties"][property]);
+			// console.log(idx, property, propertyDefinition, this.props.options.predefinedProperties[idx]["properties"][property]);
 		}
     const defaultDataType = propertyDefinition.type
       ? dataTypes[propertyDefinition.type]
