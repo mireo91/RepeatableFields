@@ -269,7 +269,15 @@ export default class Repeatable extends PureComponent {
           validatorConfiguration
         );
       });
-      return validationResults.filter((result) => result);
+			const validationResultsArray = validationResults.filter((result) => result);
+			if( this.props.options.controls.add ) {
+				if (validationResultsArray.length > 0) {
+					this.setState({ allowAdd: false })
+				} else {
+					this.setState({ allowAdd: true })
+				}
+			}
+      return validationResultsArray;
     }
   };
 
@@ -349,7 +357,7 @@ export default class Repeatable extends PureComponent {
       merge(propertyDefinition, defaultDataType);
     }
 
-    const editorOptions = propertyDefinition.editorOptions
+    let editorOptions = propertyDefinition.editorOptions
       ? propertyDefinition.editorOptions
       : {};
     const editor = propertyDefinition.editor
@@ -358,6 +366,11 @@ export default class Repeatable extends PureComponent {
     let value = repeatableValue[idx][property]
       ? repeatableValue[idx][property]
       : "";
+			if( editorOptions.hasOwnProperty("dataSourceUri") || editorOptions.hasOwnProperty("dataSourceIdentifier") ){
+				editorOptions = JSON.parse(JSON.stringify(editorOptions));
+				editorOptions.dataSourceAdditionalData["repeatableIndex"] = idx;
+				editorOptions.dataSourceAdditionalData["repeatableValue"] = this.getValue();
+			}
     return (
       <div className={style.property} hidden={propertyDefinition.hidden}>
         <Envelope
