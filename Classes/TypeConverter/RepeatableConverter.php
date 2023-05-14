@@ -59,7 +59,10 @@ class RepeatableConverter extends AbstractTypeConverter
         $context = $configuration->getConfigurationValue('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'context');
         $properties = $configuration->getConfigurationValue('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'properties');
 
-        $repeatable = new Repeatable($source, $context, $properties);
+        if( !is_array($source) )
+            $source = json_decode($source);
+
+        $repeatable = new Repeatable((array)$source, $context, $properties);
 //        \Neos\Flow\var_dump(Arrays::getValueByPath($repeatable, "."));
 //        \Neos\Flow\var_dump(is_array($repeatable));
 //        \Neos\Flow\var_dump($repeatable[0]);exit;

@@ -28,12 +28,12 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
     /**
      * @var array
      */
-    private $byFields;
+    private array $byFields;
 
     /**
      * @var array
      */
-    private $source;
+    private array $source;
 
     /**
      * @var int
@@ -50,7 +50,7 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      */
     private $proprties;
 
-    public function __construct($source, $context, $properties) {
+    public function __construct(array $source, $context, $properties) {
         $this->proprties = $properties;
         $this->context = $context;
         $this->source = $source;
@@ -79,7 +79,7 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
                         $targ = $conf['type'] ?? 'string';
 
                         if( $targ == "repeatable"){
-                            $v = new Repeatable($val, $context, $conf["editorOptions"]);
+                            $v = new Repeatable(is_array($val)?$val:[], $context, $conf["editorOptions"]);
 //                            \Neos\Flow\var_dump($v);exit;
                         }else{
                             $propConf = [
@@ -126,10 +126,17 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      * @return mixed
      */
     public function getByFields($fieldPath = null): mixed{
+        if( !$fieldPath ){
+            return $this->byFields;
+        }
+        if( is_string($fieldPath) && isset($this->byFields[$fieldPath]) ){
+            return $this->byFields[$fieldPath];
+        }
         return Arrays::getValueByPath($this->byFields, $fieldPath);
     }
 
     public function count(): int{
+//        $value = $this->toArray();
         return count($this->toArray());
     }
 

@@ -368,8 +368,10 @@ export default class Repeatable extends PureComponent {
       : "";
 			if( editorOptions.hasOwnProperty("dataSourceUri") || editorOptions.hasOwnProperty("dataSourceIdentifier") ){
 				editorOptions = JSON.parse(JSON.stringify(editorOptions));
-				editorOptions.dataSourceAdditionalData["repeatableIndex"] = idx;
-				editorOptions.dataSourceAdditionalData["repeatableValue"] = this.getValue();
+				if( editorOptions.dataSourceAdditionalData.hasOwnProperty("repeatableIndex") )
+					editorOptions.dataSourceAdditionalData["repeatableIndex"] = idx;
+				if( editorOptions.dataSourceAdditionalData.hasOwnProperty("repeatableValue") )
+					editorOptions.dataSourceAdditionalData["repeatableValue"] = this.getValue();
 			}
     return (
       <div className={style.property} hidden={propertyDefinition.hidden}>
