@@ -191,8 +191,9 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
         return $this->source;
     }
 
-    public function toArray(){
-        return $this->source;
+    public function toArray(): array
+    {
+        return is_array($this->source) ? $this->source : [];
     }
 
     public function __toString()
