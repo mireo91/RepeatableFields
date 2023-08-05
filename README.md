@@ -2,13 +2,17 @@
 Neos package for adding repeatables fields to neos-ui react
 
 ## Demo View
-![](repeatable.gif)
 
-## Instalation
+![Demo of repeatable fields](repeatable.gif)
 
-`composer require mireo91/repeatablefields`
+## Installation
+
+```bash
+composer require mireo91/repeatablefields
+```
 
 ## Configuration
+
 Create property with type `reapeatable`.
 
 ```YAML
@@ -21,9 +25,9 @@ Create property with type `reapeatable`.
         inspector:
           group: document
           editorOptions:
-#            you can use data source to dynamically set editorOptions (example: {predefinedProperties: [...]}) 
-#            dataSourceUri: "" 
-#            dataSourceIdentifier: 
+#            you can use data source to dynamically set editorOptions (example: {predefinedProperties: [...]})
+#            dataSourceUri: ""
+#            dataSourceIdentifier:
 #            dataSourceDisableCaching: false
 #            dataSourceAdditionalData:
 #              apiKey: 'foo-bar-baz'
@@ -43,9 +47,9 @@ Create property with type `reapeatable`.
                     editorOptions:
                       readonly: true
                   field1:
-                    defaultValue: defalut value for index 0 field1 
+                    defaultValue: defalut value for index 0 field1
               - value:
-                  field0: 
+                  field0:
                     defaultValue: defalut value for index 1 field0
               - value:
                   field0:
@@ -56,7 +60,7 @@ Create property with type `reapeatable`.
                 editorOptions:
                   placeholder: 'default field editor'
               field1:
-              	type: 'Neos\Media\Domain\Model\ImageInterface' #type for property mapper
+              	type: 'Neos\Media\Domain\Model\ImageInterface' # type for property mapper
                 label: 'Image field'
                 editorOptions:
                   placeholder: 'placeholder test'
@@ -69,11 +73,11 @@ Create property with type `reapeatable`.
 
 ## Nested
 
-In fusion you can get data by path  `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field  
+In fusion you can get data by path  `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field
 
 ## Important changes between v1.x.x
 
-Right now when you want to uprade to v2.x.x be aware that you may need to adjust some fusion because of better property mapping of object type fileds 
+Right now when you want to uprade to v2.x.x be aware that you may need to adjust some fusion because of better property mapping of object type fileds
 
 ## Issues
 
