@@ -136,8 +136,11 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
     }
 
     public function count(): int{
-//        $value = $this->toArray();
-        return count($this->toArray());
+        $value = $this->toArray();
+        if (!is_array($value)) {
+            return 0;
+        }
+        return count($value);
     }
 
     /**
