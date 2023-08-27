@@ -18,7 +18,7 @@ Create property with type `reapeatable`.
 ```YAML
   ...
   properties:
-    repetableProperty:
+    repeatableProperty:
       type: repeatable
       ui:
         label: 'Repeatable Field Group'
@@ -46,12 +46,12 @@ Create property with type `reapeatable`.
                     defaultValue: defalut value for index 0 field0
                     editorOptions:
                       readonly: true
-                  field1:
+                  field2:
                     defaultValue: defalut value for index 0 field1
-              - value:
+              - properties:
                   field0:
                     defaultValue: defalut value for index 1 field0
-              - value:
+              - properties:
                   field0:
                     defaultValue: defalut value for index 2 field0
 #                ...
@@ -60,7 +60,7 @@ Create property with type `reapeatable`.
                 editorOptions:
                   placeholder: 'default field editor'
               field1:
-              	type: 'Neos\Media\Domain\Model\ImageInterface' # type for property mapper
+                type: 'Neos\Media\Domain\Model\ImageInterface' # type for property mapper
                 label: 'Image field'
                 editorOptions:
                   placeholder: 'placeholder test'
