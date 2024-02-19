@@ -24,7 +24,8 @@ class NodePropertyHelper
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function getRepeatableValue(NodeInterface $node, string $propertyName){
+    public function getRepeatableValue(NodeInterface $node, string $propertyName)
+    {
         $nodeType = $node->getNodeType();
 
         $explodedPropertyName = explode('.', $propertyName);
@@ -33,15 +34,15 @@ class NodePropertyHelper
         $value = $node->getNodeData()->getProperty($explodedPropertyName[0]);
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'context', $node->getContext());
-        $properties = $nodeType->getConfiguration("properties.${explodedPropertyName[0]}.ui.inspector.editorOptions");
+        $properties = $nodeType->getConfiguration("properties.{$explodedPropertyName[0]}.ui.inspector.editorOptions");
         $configuration->setTypeConverterOption('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'properties', $properties);
         /** @var Repeatable $value */
         $value = $this->propertyMapper->convert($value, $expectedPropertyType, $configuration);
         if (isset($explodedPropertyName[1])) {
             array_shift($explodedPropertyName);
-            return $value->offsetGet(implode(".",$explodedPropertyName));
-        }else{
-            return $value;
+            return $value->offsetGet(implode(".", $explodedPropertyName));
         }
+
+        return $value;
     }
 }
