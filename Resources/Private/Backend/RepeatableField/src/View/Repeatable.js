@@ -158,7 +158,7 @@ export default class Repeatable extends PureComponent {
 			const { properties } = props.options;
 			if (properties) {
 				Object.keys(properties).map((property, index) => {
-					this.emptyGroup[property] = properties[property].defaultValue
+					this.emptyGroup[property] = properties[property].defaultValue !== undefined
 						? properties[property].defaultValue
 						: "";
 				});
