@@ -49,7 +49,6 @@ export default class Envelope extends PureComponent {
 
   render() {
     const restProps = omit(this.props, ["commit"]);
-
-    return <EditorEnvelope commit={this.commit} {...restProps} />;
+    return <EditorEnvelope commit={this.commit} options={restProps.editorOptions ? restProps.editorOptions : {}} {...restProps} />;
   }
 }
