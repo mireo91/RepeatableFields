@@ -292,34 +292,59 @@ export default class Repeatable extends PureComponent {
   createElement = (idx) => {
     const { options } = this.props;
     const { allowRemove, currentValue } = this.state;
-		const isPredefined = options.predefinedProperties && options.predefinedProperties[idx]?true:false;
+		const isPredefined = options.predefinedProperties && options.predefinedProperties[idx] ? true : false;
     const DragHandle = SortableHandle(() => (
       <span type="button" className={style.move}>
         <Icon icon="sort" />
       </span>
     ));
 
-    return (
-      <div className={style.wrapper}>
-        <div class={style.buttons}>
-          {!isPredefined && options.controls.move && currentValue.length > 1 ? (
-            <DragHandle />
-          ) : (
-            ""
-          )}
-          {!isPredefined && options.controls.remove && allowRemove ? (
-            <IconButton
-              onClick={() => this.handleRemove(idx)}
-              className={style.delete}
-              icon="trash"
-            />
-          ) : (
-            ""
-          )}
+    const propertiesCount = Object.keys(options.properties).length;
+    if (propertiesCount === 1) {
+      return (
+        <div className={style.simpleWrapper}>
+          {this.getProperties(idx)}
+          <div class={style.simpleButtons}>
+            {!isPredefined && options.controls.remove && allowRemove ? (
+              <IconButton
+                onClick={() => this.handleRemove(idx)}
+                className={style.delete}
+                icon="trash"
+              />
+            ) : (
+              ""
+            )}
+            {!isPredefined && options.controls.move && currentValue.length > 1 ? (
+              <DragHandle />
+            ) : (
+              ""
+            )}
+          </div>
         </div>
-        {this.getProperties(idx)}
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className={style.wrapper}>
+          <div class={style.buttons}>
+            {!isPredefined && options.controls.move && currentValue.length > 1 ? (
+              <DragHandle />
+            ) : (
+              ""
+            )}
+            {!isPredefined && options.controls.remove && allowRemove ? (
+              <IconButton
+                onClick={() => this.handleRemove(idx)}
+                className={style.delete}
+                icon="trash"
+              />
+            ) : (
+              ""
+            )}
+          </div>
+          {this.getProperties(idx)}
+        </div>
+      );
+    }
   };
 
   getProperties = (idx) => {
@@ -374,7 +399,7 @@ export default class Repeatable extends PureComponent {
 					editorOptions.dataSourceAdditionalData["repeatableValue"] = this.getValue();
 			}
     return (
-      <div className={style.property} hidden={propertyDefinition.hidden}>
+      <div className={Object.keys(this.props.options.properties).length > 1 ? style.property : ""} hidden={propertyDefinition.hidden}>
         <Envelope
           identifier={`repeatable-${idx}-${property}`}
           // label={propertyDefinition.label?propertyDefinition.label:''}
