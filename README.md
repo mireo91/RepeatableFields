@@ -10,7 +10,7 @@ Neos package for adding repeatables fields to neos-ui react
 ```bash
 composer require mireo91/repeatablefields
 ```
-
+ 
 ## Configuration
 
 Create property with type `reapeatable`.
