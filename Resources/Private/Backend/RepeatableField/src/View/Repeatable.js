@@ -292,7 +292,7 @@ export default class Repeatable extends PureComponent {
   createElement = (idx) => {
     const { options } = this.props;
     const { allowRemove, currentValue } = this.state;
-		const isPredefined = options.predefinedProperties && options.predefinedProperties[idx] ? true : false;
+    const isPredefined = options.predefinedProperties && options.predefinedProperties[idx] ? true : false;
     const DragHandle = SortableHandle(() => (
       <span type="button" className={style.move}>
         <Icon icon="sort" />
