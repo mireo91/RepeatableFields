@@ -49,3 +49,41 @@
       background-color: #3f3f3f;
   }
 }
+
+.simpleWrapper {
+  display: flex;
+  position: relative;
+}
+
+.simpleWrapper span label span {
+  display: none;
+}
+
+.group {
+  flex: 1;
+  margin-bottom: 10px;
+}
+
+.simpleButtons {
+  margin-top: 6px;
+  margin-left: 2px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  color: #fff;
+  font-size: 14px;
+  gap: 2px;
+
+  & > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    min-width: 40px;
+    background-color: #323232;
+  }
+
+  &:empty {
+    display: none
+  }
+}

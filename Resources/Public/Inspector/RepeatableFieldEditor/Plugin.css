@@ -50,5 +50,42 @@
       background-color: #3f3f3f;
   }
 
+.style__simpleWrapper___uAjc6 {
+  display: flex;
+  position: relative;
+}
+
+.style__simpleWrapper___uAjc6 span label span {
+  display: none;
+}
+
+.style__group___3NoBa {
+  flex: 1;
+  margin-bottom: 10px;
+}
+
+.style__simpleButtons___3wyep {
+  margin-top: 6px;
+  margin-left: 2px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  color: #fff;
+  font-size: 14px;
+  gap: 2px;
+}
+
+.style__simpleButtons___3wyep > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    min-width: 40px;
+    background-color: #323232;
+  }
+
+.style__simpleButtons___3wyep:empty {
+    display: none
+  }
 
 /*# sourceMappingURL=Plugin.css.map*/
