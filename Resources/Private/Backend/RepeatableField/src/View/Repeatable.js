@@ -322,8 +322,9 @@ export default class Repeatable extends PureComponent {
           </div>
         </div>
       );
-    } else {
-      return (
+    }
+ 
+    return (
         <div className={style.wrapper}>
           <div class={style.buttons}>
             {!isPredefined && options.controls.move && currentValue.length > 1 ? (
@@ -344,7 +345,6 @@ export default class Repeatable extends PureComponent {
           {this.getProperties(idx)}
         </div>
       );
-    }
   };
 
   getProperties = (idx) => {
