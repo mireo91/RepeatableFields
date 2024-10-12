@@ -427,7 +427,7 @@ export default class Repeatable extends PureComponent {
             onSortEndAction={this.onSortAction}
           />
           {options.controls.add && allowAdd ? (
-            <Button onClick={() => this.handleAdd()}>{buttonAddLabel}</Button>
+            <Button onClick={() => this.handleAdd()}>{i18nRegistry.translate(buttonAddLabel)}</Button>
           ) : (
             ""
           )}
