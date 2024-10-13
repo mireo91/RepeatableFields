@@ -1,10 +1,11 @@
 .wrapper {
   position: relative;
-  margin-bottom: 10px;
   background: var(--colors-ContrastDarkest);
   border: 1px dashed var(--colors-ContrastNeutral);
-  border-radius: 2px;
-  padding: 10px;
+  border-left: none;
+  border-right: none;
+  padding: var(--spacing-Full);
+  margin: 0 calc(var(--spacing-Full) * -1) 10px;
 }
 
 .property {
