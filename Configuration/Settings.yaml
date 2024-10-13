@@ -3,7 +3,7 @@ Neos:
     userInterface:
       translation:
         autoInclude:
-          'Mireo.RepeatableFields': ['NodeTypes/*']
+          'Mireo.RepeatableFields': ['Main']
       inspector:
         dataTypes:
           repeatable:
@@ -14,12 +14,11 @@ Neos:
         editors:
           Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor:
             editorOptions:
-              buttonLabel: 'Neos.Neos:Main:content.inspector.editors.codeEditor.editCode'
               autoFocus: false
               disabled: false
               maxlength: null
               readonly: false
-              buttonAddLabel: 'Add row'
+              buttonAddLabel: 'Mireo.RepeatableFields:Main:addRow'
               indexKey: null
               min: 0
               max: 100
