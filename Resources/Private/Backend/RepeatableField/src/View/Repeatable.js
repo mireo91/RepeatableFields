@@ -5,7 +5,6 @@ import Envelope from "./Envelope";
 
 import { connect } from "react-redux";
 import { selectors } from "@neos-project/neos-ui-redux-store";
-import I18n from "@neos-project/neos-ui-i18n";
 import { neos } from "@neos-project/neos-ui-decorators";
 import { IconButton, Icon, Button } from "@neos-project/react-ui-components";
 import { $get, $set, $transform } from "plow-js";
@@ -292,7 +291,7 @@ export default class Repeatable extends PureComponent {
   createElement = (idx) => {
     const { options } = this.props;
     const { allowRemove, currentValue } = this.state;
-		const isPredefined = options.predefinedProperties && options.predefinedProperties[idx]?true:false;
+		const isPredefined = options.predefinedProperties && options.predefinedProperties[idx] ? true : false;
     const DragHandle = SortableHandle(() => (
       <span type="button" className={style.move}>
         <Icon icon="sort" />
@@ -302,19 +301,15 @@ export default class Repeatable extends PureComponent {
     return (
       <div className={style.wrapper}>
         <div class={style.buttons}>
-          {!isPredefined && options.controls.move && currentValue.length > 1 ? (
+          {!isPredefined && options.controls.move && currentValue.length > 1 && (
             <DragHandle />
-          ) : (
-            ""
           )}
-          {!isPredefined && options.controls.remove && allowRemove ? (
+          {!isPredefined && options.controls.remove && allowRemove && (
             <IconButton
               onClick={() => this.handleRemove(idx)}
               className={style.delete}
               icon="trash"
             />
-          ) : (
-            ""
           )}
         </div>
         {this.getProperties(idx)}
@@ -407,7 +402,7 @@ export default class Repeatable extends PureComponent {
   };
 
   render() {
-    const { options, i18nRegistry } = this.props;
+    const { options, i18nRegistry, id } = this.props;
     const { isLoading, allowAdd } = this.state;
     const loadingLabel = i18nRegistry.translate(
       "loading",
@@ -416,25 +411,27 @@ export default class Repeatable extends PureComponent {
       "Neos.Neos",
       "Main"
     );
-    const { buttonAddLabel = "Add row" } = options;
+    const { buttonAddLabel = "Mireo.RepeatableFields:Main:addRow" } = options;
 
-    if (!isLoading) {
+    if (isLoading) {
       return (
-        <Fragment>
-          <Sortable
-            element={this.createElement}
-            items={this.getValue()}
-            onSortEndAction={this.onSortAction}
-          />
-          {options.controls.add && allowAdd ? (
-            <Button onClick={() => this.handleAdd()}>{i18nRegistry.translate(buttonAddLabel)}</Button>
-          ) : (
-            ""
-          )}
-        </Fragment>
-      );
-    } else {
-      return <div>{loadingLabel}</div>;
+        <div id={id} className={style.loading} title={loadingLabel}>
+            <Icon icon="spinner" size="lg" spin />
+        </div>
+      )
     }
+
+    return (
+      <Fragment>
+        <Sortable
+          element={this.createElement}
+          items={this.getValue()}
+          onSortEndAction={this.onSortAction}
+        />
+        {options.controls.add && allowAdd && (
+          <Button onClick={() => this.handleAdd()}>{i18nRegistry.translate(buttonAddLabel)}</Button>
+        )}
+      </Fragment>
+    );
   }
 }
