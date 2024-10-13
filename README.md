@@ -1,4 +1,5 @@
 # RepeatableFields
+
 Neos package for adding repeatables fields to neos-ui react
 
 ## Demo View
@@ -73,7 +74,7 @@ Create property with type `reapeatable`.
 
 ## Nested
 
-In fusion you can get data by path  `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field
+In fusion you can get data by path `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field
 
 ## Important changes between v1.x.x
 
