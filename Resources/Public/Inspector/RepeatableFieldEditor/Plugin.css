@@ -1,10 +1,11 @@
 .style__wrapper___cQFyX {
-    position: relative;
-    margin-bottom: 10px;
-    background: #141414;
-    border: 1px dashed #323232;
-    border-radius: 2px;
-    padding: 10px
+  position: relative;
+  background: #141414;
+  border: 1px dashed #323232;
+  border-left: none;
+  border-right: none;
+  padding: 16px;
+  margin: 0 calc(16px * -1) 10px;
 }
 
 .style__property___3P5di {
@@ -12,12 +13,12 @@
 }
 
 .style__buttons___1O8ni {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
-    color: #fff;
-    font-size: 14px;
-    gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  color: #FFF;
+  font-size: 14px;
+  gap: 10px ;
 }
 
 .style__buttons___1O8ni > * {
@@ -25,30 +26,37 @@
       align-items: center;
       justify-content: center;
       height: 40px;
-      min-width: 40px;
+      min-width: 40px;;
       background-color: #323232;
-    }
+  }
 
 .style__buttons___1O8ni:empty {
-      display: none
-    }
+      display: none;
+  }
 
 .style__delete___3tAu8 {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .style__delete___3tAu8:hover {
-        background-color: #ff460d !important;
-    }
+      background-color: #ff460d !important;
+  }
 
 .style__move___2H6UK {
-    flex: 1;
-    cursor: row-resize;
+  flex: 1;
+  cursor: row-resize;
 }
 
 .style__move___2H6UK:hover {
       background-color: #3f3f3f;
   }
+
+.style__loading___2pb7J {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px;
+}
 
 
 /*# sourceMappingURL=Plugin.css.map*/
