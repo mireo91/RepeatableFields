@@ -325,8 +325,8 @@ export default class Repeatable extends PureComponent {
     });
     return (
 			<div className="group">
-				<td dangerouslySetInnerHTML={{__html: this.state.actions}} />
-				{groupLabel ? <span dangerouslySetInnerHTML={{__html: groupLabel}}/> : ""}
+				{this.state.actions && <div dangerouslySetInnerHTML={{__html: this.state.actions}} /> }
+				{groupLabel && <span dangerouslySetInnerHTML={{__html: groupLabel}}/>}
 				{properties}
 			</div>
 		);
