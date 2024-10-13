@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Sortable from "./Sortable";
 import Envelope from "./Envelope";
@@ -302,12 +302,12 @@ function Repeatable(props) {
 
     if (isLoading || !options) {
         return (
-            <Fragment>
+            <>
                 <Label htmlFor={id}>{label}</Label>
                 <div id={id} className={style.loading} title={i18nRegistry.translate("Neos.Neos:Main:loading")}>
                     <Icon icon="spinner" size="lg" spin />
                 </div>
-            </Fragment>
+            </>
         );
     }
 
@@ -318,13 +318,13 @@ function Repeatable(props) {
     const { buttonAddLabel = "Mireo.RepeatableFields:Main:addRow" } = options;
 
     return (
-        <Fragment>
+        <>
             <Label htmlFor={id}>{label}</Label>
             <Sortable element={createElement} items={currentValue} onSortEndAction={onSortAction} />
             {options.controls.add && allowAdd && (
                 <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>
             )}
-        </Fragment>
+        </>
     );
 }
 Repeatable.propTypes = {
