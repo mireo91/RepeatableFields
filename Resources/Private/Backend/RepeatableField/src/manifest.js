@@ -8,6 +8,7 @@ manifest("Mireo.RepeatableFields:RepeatableField", {}, (globalRegistry) => {
     "Mireo.RepeatableFields/Inspector/Editors/RepeatableFieldEditor",
     {
       component: RepeatableField,
+      hasOwnLabel: true,
     }
   );
 });

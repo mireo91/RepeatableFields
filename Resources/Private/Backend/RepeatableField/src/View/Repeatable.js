@@ -6,7 +6,7 @@ import Envelope from "./Envelope";
 import { connect } from "react-redux";
 import { selectors } from "@neos-project/neos-ui-redux-store";
 import { neos } from "@neos-project/neos-ui-decorators";
-import { IconButton, Icon, Button } from "@neos-project/react-ui-components";
+import { IconButton, Icon, Button, Label } from "@neos-project/react-ui-components";
 import { $get, $set, $transform } from "plow-js";
 
 import style from "../style.css";
@@ -60,6 +60,7 @@ export default class Repeatable extends PureComponent {
 
     commit: PropTypes.func.isRequired,
     options: PropTypes.shape({
+      hidden: PropTypes.bool,
       buttonAddLabel: PropTypes.string,
 			dataSourceIdentifier: PropTypes.string,
 			dataSourceUri: PropTypes.string,
@@ -403,6 +404,7 @@ export default class Repeatable extends PureComponent {
 
   render() {
     const { options, i18nRegistry, id } = this.props;
+    const label = i18nRegistry.translate(this.props.label);
     const { isLoading, allowAdd } = this.state;
     const loadingLabel = i18nRegistry.translate(
       "loading",
@@ -413,16 +415,25 @@ export default class Repeatable extends PureComponent {
     );
     const { buttonAddLabel = "Mireo.RepeatableFields:Main:addRow" } = options;
 
+    if (options.hidden) {
+      // This can be used to hide the whole editor via data source configuration
+      return null;
+    }
+
     if (isLoading) {
       return (
-        <div id={id} className={style.loading} title={loadingLabel}>
-            <Icon icon="spinner" size="lg" spin />
-        </div>
+        <Fragment>
+          <Label htmlFor={id}>{label}</Label>
+          <div id={id} className={style.loading} title={loadingLabel}>
+              <Icon icon="spinner" size="lg" spin />
+          </div>
+        </Fragment>
       )
     }
 
     return (
       <Fragment>
+        <Label htmlFor={id}>{label}</Label>
         <Sortable
           element={this.createElement}
           items={this.getValue()}
