@@ -6068,6 +6068,13 @@ plow-js@^2.2.0:
   optionalDependencies:
     immutable "^3.7.6"
 
+plow-js@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/plow-js/-/plow-js-3.0.0.tgz#8068d21bb698150afc3428b5f7154105a2474d2f"
+  integrity sha512-in222krkkAB6e3bYiRNj6Reh47UrGpjW+SJ1IamRkeFxsb6z2wGhDQ+SFiIhUMZWZ/LHRllz/lm1wUhwvM9Z/g==
+  optionalDependencies:
+    immutable "^3.7.6"
+
 pofile@^1.0.9:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/pofile/-/pofile-1.1.4.tgz#eab7e29f5017589b2a61b2259dff608c0cad76a2"
