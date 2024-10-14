@@ -54,6 +54,7 @@ function Repeatable(props) {
         if (currentValueAsJSON === dataAsJSON || !options) {
             return;
         }
+        setCurrentValueAsJSON(dataAsJSON);
         testIfAdd(currentValue);
         testIfRemove(currentValue);
     }, [currentValue]);
