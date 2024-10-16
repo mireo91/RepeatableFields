@@ -32,7 +32,7 @@ Create property with type `reapeatable`.
 #            dataSourceDisableCaching: false
 #            dataSourceAdditionalData:
 #              apiKey: 'foo-bar-baz'
-            buttonAddLabel: 'Add row' #default lable
+            buttonAddLabel: 'Add row' #default label
             max: 100 #default max
             min: 0   #default min
             indexKey: field0 # when set nested data are not available but you can get data like (.property("repeatableProperty.[value of field0].field1"))
