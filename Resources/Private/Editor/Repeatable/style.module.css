@@ -57,3 +57,39 @@
     align-items: center;
     min-height: var(--spacing-GoldenUnit);
 }
+
+.simpleWrapper {
+    display: flex;
+    position: relative;
+    column-gap: 2px;
+    margin-bottom: 10px;
+
+    & label {
+        display: none;
+    }
+
+    & .group {
+        flex: 1;
+    }
+}
+
+.simpleButtons {
+    display: flex;
+    justify-content: flex-end;
+    color: var(--colors-ContrastBrightest);
+    font-size: var(--fontSize-Base);
+    gap: 2px;
+
+    & > * {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--spacing-GoldenUnit);
+        min-width: var(--spacing-GoldenUnit);
+        background-color: var(--colors-ContrastNeutral);
+    }
+
+    &:empty {
+        display: none;
+    }
+}

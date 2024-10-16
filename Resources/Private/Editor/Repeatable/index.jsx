@@ -215,6 +215,21 @@ function Repeatable(props) {
             </span>
         ));
 
+        const propertiesCount = Object.keys(options.properties).length;
+        if (propertiesCount === 1) {
+            return (
+                <div className={style.simpleWrapper}>
+                    {getProperties(idx)}
+                    <div class={style.simpleButtons}>
+                        {!isPredefined && options.controls.remove && allowRemove && (
+                            <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
+                        )}
+                        {!isPredefined && options.controls.move && currentValue.length > 1 && <DragHandle />}
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div className={style.wrapper}>
                 <div class={style.buttons}>
@@ -237,7 +252,7 @@ function Repeatable(props) {
         });
         // TODO Do we need this? <td dangerouslySetInnerHTML={{ __html: this.state.actions }} />
         return (
-            <div className="group">
+            <div className={style.group}>
                 {groupLabel && <span dangerouslySetInnerHTML={{ __html: groupLabel }} />}
                 {properties}
             </div>
@@ -290,8 +305,9 @@ function Repeatable(props) {
                 }
             }
         }
+        const isSimpleView = Object.keys(properties).length <= 1;
         return (
-            <div className={style.property} hidden={propertyDefinition.hidden}>
+            <div className={!isSimpleView && style.property} hidden={propertyDefinition.hidden}>
                 <Envelope
                     identifier={`repeatable-${idx}-${property}`}
                     // label={propertyDefinition.label?propertyDefinition.label:''}
