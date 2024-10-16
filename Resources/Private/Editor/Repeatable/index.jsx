@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import Sortable from "./Sortable";
-import Envelope from "./Envelope";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { nanoid } from "nanoid";
 import { selectors } from "@neos-project/neos-ui-redux-store";
 import { neos } from "@neos-project/neos-ui-decorators";
 import { IconButton, Icon, Button, Label } from "@neos-project/react-ui-components";
-import style from "./style.module.css";
-import { SortableHandle } from "react-sortable-hoc";
-import { arrayMoveImmutable } from "array-move";
 import backend from "@neos-project/neos-ui-backend-connector";
-import { deepMerge, set, isNumeric } from "./helper";
+import { Sortable, DragHandle } from "./Sortable";
+import Envelope from "./Envelope";
+import { deepMerge, set, isNumeric, dynamicSort, clone } from "./helper";
+import style from "./style.module.css";
 
 const getDataLoaderOptionsForProps = (props) => ({
     contextNodePath: props.focusedNodePath,
@@ -33,6 +32,7 @@ function Repeatable(props) {
     } = props;
     const { dataSourceIdentifier, dataSourceUri, dataSourceAdditionalData } = props.options;
     const hasDataSource = !!(dataSourceIdentifier || dataSourceUri);
+    const KEY_PROPERTY = "_UUID_";
 
     const label = i18nRegistry.translate(props.label);
     const [isLoading, setLoading] = useState(true);
@@ -66,6 +66,13 @@ function Repeatable(props) {
         setCurrentValueAsJSON(dataAsJSON);
         testIfAdd(currentValue);
         testIfRemove(currentValue);
+        if (options.sortBy) {
+            const timeout = setTimeout(() => {
+                const sorted = dynamicSort(currentValue, options.sortBy);
+                handleValueChange(sorted);
+            }, 2000);
+            return () => clearTimeout(timeout);
+        }
     }, [currentValue]);
 
     useEffect(() => {
@@ -111,7 +118,14 @@ function Repeatable(props) {
     }
 
     function initialValue(group) {
-        let newValue = value ? [...value] : [];
+        let newValue = value ? clone(value) : [];
+        // add an fixed index to the value
+        newValue = newValue.map((item, idx) => {
+            return {
+                ...item,
+                [KEY_PROPERTY]: nanoid(),
+            };
+        });
         const { min, max } = options;
 
         if (min) {
@@ -132,8 +146,8 @@ function Repeatable(props) {
         if (newValue.length) {
             for (let key = 0; key < newValue.length; key++) {
                 const predefined = options.predefinedProperties?.[key]?.properties;
-                const currentEntry = { ...newValue[key] };
-                const availableKeys = Object.keys(currentEntry).filter((key) => key in group);
+                const currentEntry = clone(newValue[key]);
+                const availableKeys = Object.keys(currentEntry).filter((key) => key == KEY_PROPERTY || key in group);
                 const cleanedUpEntry = availableKeys.reduce((cur, keyname) => {
                     const isPredefined = predefined?.[keyname]?.defaultValue != undefined;
                     let value = isPredefined ? predefined[keyname].defaultValue : currentEntry[keyname];
@@ -153,7 +167,12 @@ function Repeatable(props) {
     }
 
     function handleValueChange(value) {
-        commit(value);
+        // Remove the KEY_PROPERTY from the value
+        const commitValue = JSON.parse(JSON.stringify(value)).map((item) => {
+            delete item[KEY_PROPERTY];
+            return item;
+        });
+        commit(commitValue);
         setCurrentValue(value);
     }
 
@@ -208,23 +227,18 @@ function Repeatable(props) {
 
     function createElement(idx) {
         const isPredefined = !!options.predefinedProperties && options.predefinedProperties[idx];
-        const { controls } = options;
-        const DragHandle = SortableHandle(() => (
-            <span type="button" className={style.move}>
-                <Icon icon="sort" />
-            </span>
-        ));
+        const { controls, sortBy, properties } = options;
 
-        const propertiesCount = Object.keys(options.properties).length;
+        const propertiesCount = Object.keys(properties).length;
         if (propertiesCount === 1) {
             return (
                 <div className={style.simpleWrapper}>
                     {getProperties(idx)}
                     <div class={style.simpleButtons}>
-                        {!isPredefined && options.controls.remove && allowRemove && (
+                        {!isPredefined && controls.remove && allowRemove && (
                             <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
                         )}
-                        {!isPredefined && options.controls.move && currentValue.length > 1 && <DragHandle />}
+                        {!isPredefined && controls.move && currentValue.length > 1 && <DragHandle />}
                     </div>
                 </div>
             );
@@ -250,7 +264,7 @@ function Repeatable(props) {
         Object.keys(emptyGroup).map((property) => {
             properties.push(getProperty(property, idx));
         });
-        // TODO Do we need this? <td dangerouslySetInnerHTML={{ __html: this.state.actions }} />
+
         return (
             <div className={style.group}>
                 {groupLabel && <span dangerouslySetInnerHTML={{ __html: groupLabel }} />}
@@ -268,7 +282,7 @@ function Repeatable(props) {
     }
 
     function getProperty(property, idx) {
-        const repeatableValue = [...currentValue];
+        const repeatableValue = clone(currentValue);
         const { properties, predefinedProperties } = options;
         let propertyDefinition = properties[property];
         if (
@@ -310,7 +324,6 @@ function Repeatable(props) {
             <div className={!isSimpleView && style.property} hidden={propertyDefinition.hidden}>
                 <Envelope
                     identifier={`repeatable-${idx}-${property}`}
-                    // label={propertyDefinition.label?propertyDefinition.label:''}
                     options={editorOptions}
                     value={value}
                     renderSecondaryInspector={props.renderSecondaryInspector}
@@ -326,10 +339,6 @@ function Repeatable(props) {
                 />
             </div>
         );
-    }
-
-    function onSortAction({ oldIndex, newIndex }) {
-        handleValueChange(arrayMoveImmutable(currentValue, oldIndex, newIndex));
     }
 
     if (isLoading || !options) {
@@ -356,7 +365,15 @@ function Repeatable(props) {
             <Label htmlFor={id}>
                 {label} {renderHelpIcon()}
             </Label>
-            <Sortable element={createElement} items={currentValue} onSortEndAction={onSortAction} />
+            <Sortable
+                element={createElement}
+                items={currentValue}
+                onChange={handleValueChange}
+                enable={options.controls?.move}
+                automaticSorting={options.sortBy}
+                value={currentValue}
+                KEY_PROPERTY={KEY_PROPERTY}
+            />
             {options.controls.add && allowAdd && (
                 <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>
             )}
@@ -399,6 +416,12 @@ Repeatable.propTypes = {
             remove: PropTypes.bool,
             add: PropTypes.bool,
         }),
+        sortBy: PropTypes.arrayOf(
+            PropTypes.shape({
+                property: PropTypes.string,
+                direction: PropTypes.oneOf(["asc", "desc"]),
+            }),
+        ),
         //
         // 	properties: PropTypes.objectOf(
         // 		PropTypes.object()

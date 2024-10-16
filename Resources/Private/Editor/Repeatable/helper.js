@@ -3,6 +3,8 @@ export function set(path, value, object) {
     return recursivelySetValueInObject(object, value, path);
 }
 
+export const clone = (input) => JSON.parse(JSON.stringify(input));
+
 export function isNumeric(str) {
     if (typeof str == "number") {
         return true;
@@ -14,8 +16,44 @@ export function isNumeric(str) {
     return !isNaN(str) && !isNaN(parseFloat(str));
 }
 
+export function dynamicSort(arrayToSort, sortBy) {
+    const array = clone(arrayToSort);
+    if (!Array.isArray(array) || !array.length || !Array.isArray(sortBy) || !sortBy.length) {
+        return array;
+    }
+    return array.sort((a, b) => {
+        return sortBy.reduce((result, current) => {
+            if (result !== 0) {
+                return result;
+            }
+
+            const { property, order = "asc" } = current;
+            const propA = a[property];
+            const propB = b[property];
+
+            let comparison = 0;
+
+            if (isNumeric(propA) && isNumeric(propB)) {
+                if (propA > propB) {
+                    comparison = 1;
+                } else if (propA < propB) {
+                    comparison = -1;
+                }
+            } else {
+                comparison = propA.localeCompare(propB);
+            }
+
+            if (order === "desc") {
+                comparison *= -1;
+            }
+
+            return comparison;
+        }, 0);
+    });
+}
+
 export function deepMerge(obj1, obj2) {
-    const copy = { ...obj1 };
+    const copy = clone(obj1);
     for (let key in obj2) {
         if (key in obj2) {
             if (obj2[key] instanceof Object && copy[key] instanceof Object) {

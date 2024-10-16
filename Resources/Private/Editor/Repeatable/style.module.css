@@ -8,6 +8,11 @@
     margin: 0 calc(var(--spacing-Full) * -1) 10px;
 }
 
+.noSelect :not(.move) {
+    user-select: none !important;
+    pointer-events: none !important;
+}
+
 .property {
     margin-top: 10px;
 }
@@ -44,7 +49,7 @@
 
 .move {
     flex: 1;
-    cursor: row-resize;
+    cursor: grab;
 
     &:hover {
         background-color: var(--colors-ContrastDark);

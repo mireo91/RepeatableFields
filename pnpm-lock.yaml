@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@formkit/auto-animate':
+        specifier: ^0.8.2
+        version: 0.8.2
       '@neos-project/neos-ui-extensibility':
         specifier: ~8.3.10
         version: 8.3.10
@@ -23,6 +26,9 @@ importers:
       lodash.omit:
         specifier: ^4.5.0
         version: 4.5.0
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.0.7
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -183,6 +189,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@formkit/auto-animate@0.8.2':
+    resolution: {integrity: sha512-SwPWfeRa5veb1hOIBMdzI+73te5puUBHmqqaF1Bu7FjvxlYSz/kJcZKSa9Cg60zL0uRNeJL2SbRxV6Jp6Q1nFQ==}
+
   '@neos-project/neos-ui-extensibility@8.3.10':
     resolution: {integrity: sha512-cLj8iju4JIjFExjbCi2SL88DLKx8LQI7v3A4deKiXD7aigOTBprdVUwWMC4DRgNZ6tQKsWnwiQI3g0Qji+8+CQ==}
 
@@ -283,6 +292,11 @@ packages:
 
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
+    hasBin: true
+
+  nanoid@5.0.7:
+    resolution: {integrity: sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==}
+    engines: {node: ^18 || >=20}
     hasBin: true
 
   object-assign@4.1.1:
@@ -400,6 +414,8 @@ snapshots:
   '@esbuild/win32-x64@0.24.0':
     optional: true
 
+  '@formkit/auto-animate@0.8.2': {}
+
   '@neos-project/neos-ui-extensibility@8.3.10':
     dependencies:
       '@neos-project/positional-array-sorter': 8.3.10
@@ -498,6 +514,8 @@ snapshots:
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
+
+  nanoid@5.0.7: {}
 
   object-assign@4.1.1: {}
 

@@ -40,6 +40,13 @@ Create property with type `reapeatable`.
               move: true
               remove: true
               add: true
+            # Automatically sort by on property
+            # Should only used with numeric or string values
+            # You can pass multiple properties
+            sortBy:
+              - property: field0
+                direction: desc # asc or desc. If not set, it will be asc
+              - property: field1
             predefinedProperties:
               - label: Group label
                 properties:
@@ -57,7 +64,7 @@ Create property with type `reapeatable`.
                     defaultValue: defalut value for index 2 field0
 #                ...
             properties:
-              filed0:
+              field0:
                 editorOptions:
                   placeholder: 'default field editor'
               field1:
@@ -71,6 +78,10 @@ Create property with type `reapeatable`.
                 editorOptions:
                   placeholder: 'test placeholder 2'
 ```
+
+## Important notice
+
+Please don't name any property (in the example `fieldN`) `_UUID_`, as this is used internaly to set a unique key to the items
 
 ## Nested
 
