@@ -21,7 +21,7 @@ const getDataLoaderOptionsForProps = (props) => ({
 });
 
 function Repeatable(props) {
-    const { commit, dataSourcesDataLoader, editorRegistry, i18nRegistry, id, validatorRegistry, value } = props;
+    const { commit, dataSourcesDataLoader, editorRegistry, i18nRegistry, id, validatorRegistry, value, renderHelpIcon } = props;
     const { dataSourceIdentifier, dataSourceUri, dataSourceAdditionalData } = props.options;
     const hasDataSource = !!(dataSourceIdentifier || dataSourceUri);
 
@@ -304,7 +304,7 @@ function Repeatable(props) {
     if (isLoading || !options) {
         return (
             <>
-                <Label htmlFor={id}>{label}</Label>
+                <Label htmlFor={id}>{label} {renderHelpIcon()}</Label>
                 <div id={id} className={style.loading} title={i18nRegistry.translate("Neos.Neos:Main:loading")}>
                     <Icon icon="spinner" size="lg" spin />
                 </div>
@@ -320,7 +320,7 @@ function Repeatable(props) {
 
     return (
         <>
-            <Label htmlFor={id}>{label}</Label>
+            <Label htmlFor={id}>{label} {renderHelpIcon()}</Label>
             <Sortable element={createElement} items={currentValue} onSortEndAction={onSortAction} />
             {options.controls.add && allowAdd && (
                 <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>
