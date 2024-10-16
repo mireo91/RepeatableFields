@@ -10,7 +10,7 @@ import style from "./style.module.css";
 import { SortableHandle } from "react-sortable-hoc";
 import { arrayMoveImmutable } from "array-move";
 import backend from "@neos-project/neos-ui-backend-connector";
-import { deepMerge, set } from "./helper";
+import { deepMerge, set, isNumeric } from "./helper";
 
 const getDataLoaderOptionsForProps = (props) => ({
     contextNodePath: props.focusedNodePath,
@@ -21,7 +21,16 @@ const getDataLoaderOptionsForProps = (props) => ({
 });
 
 function Repeatable(props) {
-    const { commit, dataSourcesDataLoader, editorRegistry, i18nRegistry, id, validatorRegistry, value, renderHelpIcon } = props;
+    const {
+        commit,
+        dataSourcesDataLoader,
+        editorRegistry,
+        i18nRegistry,
+        id,
+        validatorRegistry,
+        value,
+        renderHelpIcon,
+    } = props;
     const { dataSourceIdentifier, dataSourceUri, dataSourceAdditionalData } = props.options;
     const hasDataSource = !!(dataSourceIdentifier || dataSourceUri);
 
@@ -102,39 +111,45 @@ function Repeatable(props) {
     }
 
     function initialValue(group) {
-        let currentValue = value ? [...value] : [];
+        let newValue = value ? [...value] : [];
         const { min, max } = options;
 
         if (min) {
-            if (currentValue.length < min) {
+            if (newValue.length < min) {
                 for (var i = 0; i < min; ++i) {
-                    if (currentValue[i]) {
-                        currentValue[i] = value[i];
+                    if (newValue[i]) {
+                        newValue[i] = value[i];
                     } else {
-                        currentValue[i] = group;
+                        newValue[i] = group;
                     }
                 }
             }
         }
-        if (max && currentValue.length > max) {
-            currentValue = currentValue.slice(0, max);
+        if (max && newValue.length > max) {
+            newValue = newValue.slice(0, max);
         }
 
-        if (currentValue.length) {
-            const predefinedProperties = options.predefinedProperties;
-            for (let key = 0; key < currentValue.length; key++) {
-                const currentEntry = { ...currentValue[key] };
+        if (newValue.length) {
+            for (let key = 0; key < newValue.length; key++) {
+                const predefined = options.predefinedProperties?.[key]?.properties;
+                const currentEntry = { ...newValue[key] };
                 const availableKeys = Object.keys(currentEntry).filter((key) => key in group);
-                const cleanedUpEntry = availableKeys.reduce(
-                    (cur, keyname) => ({
+                const cleanedUpEntry = availableKeys.reduce((cur, keyname) => {
+                    const isPredefined = predefined?.[keyname]?.defaultValue != undefined;
+                    let value = isPredefined ? predefined[keyname].defaultValue : currentEntry[keyname];
+                    if (isNumeric(value)) {
+                        value = parseFloat(value);
+                    }
+
+                    return {
                         ...cur,
-                        [keyname]: currentEntry[keyname],
-                    }),
-                    {},
-                );
+                        [keyname]: value,
+                    };
+                }, {});
+                newValue[key] = cleanedUpEntry;
             }
         }
-        setCurrentValue(currentValue);
+        setCurrentValue(newValue);
     }
 
     function handleValueChange(value) {
@@ -304,7 +319,9 @@ function Repeatable(props) {
     if (isLoading || !options) {
         return (
             <>
-                <Label htmlFor={id}>{label} {renderHelpIcon()}</Label>
+                <Label htmlFor={id}>
+                    {label} {renderHelpIcon()}
+                </Label>
                 <div id={id} className={style.loading} title={i18nRegistry.translate("Neos.Neos:Main:loading")}>
                     <Icon icon="spinner" size="lg" spin />
                 </div>
@@ -320,7 +337,9 @@ function Repeatable(props) {
 
     return (
         <>
-            <Label htmlFor={id}>{label} {renderHelpIcon()}</Label>
+            <Label htmlFor={id}>
+                {label} {renderHelpIcon()}
+            </Label>
             <Sortable element={createElement} items={currentValue} onSortEndAction={onSortAction} />
             {options.controls.add && allowAdd && (
                 <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>

@@ -3,6 +3,17 @@ export function set(path, value, object) {
     return recursivelySetValueInObject(object, value, path);
 }
 
+export function isNumeric(str) {
+    if (typeof str == "number") {
+        return true;
+    }
+    if (typeof str != "string") {
+        return false;
+    }
+    // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this) and ensure strings of whitespace fail
+    return !isNaN(str) && !isNaN(parseFloat(str));
+}
+
 export function deepMerge(obj1, obj2) {
     const copy = { ...obj1 };
     for (let key in obj2) {
