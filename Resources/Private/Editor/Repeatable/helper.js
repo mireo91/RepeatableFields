@@ -18,9 +18,10 @@ export function isNumeric(str) {
     return !isNaN(str) && !isNaN(parseFloat(str));
 }
 
-const isObject = (value) =>
-    value != null && (value.constructor === Object || (!value.constructor && typeof value === "object"));
 export function ClientEvalIsNotFinished(input) {
+    if (!input) {
+        return false;
+    }
     if (typeof input == "string") {
         return input.includes("ClientEval:");
     }
@@ -29,9 +30,13 @@ export function ClientEvalIsNotFinished(input) {
         return input.some((value) => ClientEvalIsNotFinished(value));
     }
     if (isObject(input)) {
-        return Object.values(input).some((value) => ClientEvalIsNotFinished(value));
+        return ClientEvalIsNotFinished(Object.values(input));
     }
     return false;
+}
+
+function isObject(input) {
+    return input != null && (input.constructor === Object || (!input.constructor && typeof input === "object"));
 }
 
 export function dynamicSort(arrayToSort, sortBy) {
