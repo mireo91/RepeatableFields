@@ -8,7 +8,7 @@ import { IconButton, Icon, Button, Label } from "@neos-project/react-ui-componen
 import backend from "@neos-project/neos-ui-backend-connector";
 import { Sortable, DragHandle } from "./Sortable";
 import Envelope from "./Envelope";
-import { deepMerge, set, isNumeric, dynamicSort, clone, isSame } from "./helper";
+import { deepMerge, set, isNumeric, dynamicSort, clone, isSame, ClientEvalIsNotFinished } from "./helper";
 import style from "./style.module.css";
 
 const KEY_PROPERTY = "_UUID_";
@@ -77,7 +77,7 @@ function Repeatable(props) {
     }, [currentValue]);
 
     useEffect(() => {
-        if (!options) {
+        if (!options || ClientEvalIsNotFinished(options)) {
             return;
         }
         const group = getEmptyGroup();

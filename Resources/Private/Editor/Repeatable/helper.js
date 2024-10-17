@@ -18,6 +18,22 @@ export function isNumeric(str) {
     return !isNaN(str) && !isNaN(parseFloat(str));
 }
 
+const isObject = (value) =>
+    value != null && (value.constructor === Object || (!value.constructor && typeof value === "object"));
+export function ClientEvalIsNotFinished(input) {
+    if (typeof input == "string") {
+        return input.includes("ClientEval:");
+    }
+
+    if (Array.isArray(input)) {
+        return input.some((value) => ClientEvalIsNotFinished(value));
+    }
+    if (isObject(input)) {
+        return Object.values(input).some((value) => ClientEvalIsNotFinished(value));
+    }
+    return false;
+}
+
 export function dynamicSort(arrayToSort, sortBy) {
     const array = clone(arrayToSort);
     if (!Array.isArray(array) || !array.length || !Array.isArray(sortBy) || !sortBy.length) {
