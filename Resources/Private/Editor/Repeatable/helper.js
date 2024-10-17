@@ -5,6 +5,8 @@ export function set(path, value, object) {
 
 export const clone = (input) => JSON.parse(JSON.stringify(input));
 
+export const isSame = (a, b) => JSON.stringify(a) == JSON.stringify(b);
+
 export function isNumeric(str) {
     if (typeof str == "number") {
         return true;

@@ -8,7 +8,7 @@ import { IconButton, Icon, Button, Label } from "@neos-project/react-ui-componen
 import backend from "@neos-project/neos-ui-backend-connector";
 import { Sortable, DragHandle } from "./Sortable";
 import Envelope from "./Envelope";
-import { deepMerge, set, isNumeric, dynamicSort, clone } from "./helper";
+import { deepMerge, set, isNumeric, dynamicSort, clone, isSame } from "./helper";
 import style from "./style.module.css";
 
 const KEY_PROPERTY = "_UUID_";
@@ -172,7 +172,7 @@ function Repeatable(props) {
 
     function handleValueChange(inputValue) {
         // Nothing changed, do nothing
-        if (JSON.stringify(inputValue) == JSON.stringify(currentValue)) {
+        if (isSame(inputValue, currentValue)) {
             return;
         }
 
@@ -183,7 +183,7 @@ function Repeatable(props) {
         });
 
         // If the value is the same as the commitValue, don't commit
-        if (JSON.stringify(commitValue) != JSON.stringify(value)) {
+        if (!isSame(commitValue, value)) {
             commit(commitValue);
         }
         setCurrentValue(inputValue);
