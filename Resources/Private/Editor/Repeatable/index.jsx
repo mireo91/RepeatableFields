@@ -121,6 +121,9 @@ function Repeatable(props) {
         let newValue = value ? clone(value) : [];
         // add an fixed index to the value
         newValue = newValue.map((item, idx) => {
+            if (item[KEY_PROPERTY]) {
+                return item;
+            }
             return {
                 ...item,
                 [KEY_PROPERTY]: nanoid(),
