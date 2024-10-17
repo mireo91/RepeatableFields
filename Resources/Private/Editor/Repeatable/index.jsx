@@ -11,6 +11,8 @@ import Envelope from "./Envelope";
 import { deepMerge, set, isNumeric, dynamicSort, clone } from "./helper";
 import style from "./style.module.css";
 
+const KEY_PROPERTY = "_UUID_";
+
 const getDataLoaderOptionsForProps = (props) => ({
     contextNodePath: props.focusedNodePath,
     dataSourceIdentifier: props.options.dataSourceIdentifier,
@@ -32,7 +34,6 @@ function Repeatable(props) {
     } = props;
     const { dataSourceIdentifier, dataSourceUri, dataSourceAdditionalData } = props.options;
     const hasDataSource = !!(dataSourceIdentifier || dataSourceUri);
-    const KEY_PROPERTY = "_UUID_";
 
     const label = i18nRegistry.translate(props.label);
     const [isLoading, setLoading] = useState(true);
@@ -120,7 +121,7 @@ function Repeatable(props) {
     function initialValue(group) {
         let newValue = value ? clone(value) : [];
         // add an fixed index to the value
-        newValue = newValue.map((item, idx) => {
+        newValue = newValue.map((item) => {
             if (item[KEY_PROPERTY]) {
                 return item;
             }
@@ -169,14 +170,23 @@ function Repeatable(props) {
         setCurrentValue(newValue);
     }
 
-    function handleValueChange(value) {
-        // Remove the KEY_PROPERTY from the value
-        const commitValue = JSON.parse(JSON.stringify(value)).map((item) => {
+    function handleValueChange(inputValue) {
+        // Nothing changed, do nothing
+        if (JSON.stringify(inputValue) == JSON.stringify(currentValue)) {
+            return;
+        }
+
+        // Remove the KEY_PROPERTY from the inputValue
+        const commitValue = clone(inputValue).map((item) => {
             delete item[KEY_PROPERTY];
             return item;
         });
-        commit(commitValue);
-        setCurrentValue(value);
+
+        // If the value is the same as the commitValue, don't commit
+        if (JSON.stringify(commitValue) != JSON.stringify(value)) {
+            commit(commitValue);
+        }
+        setCurrentValue(inputValue);
     }
 
     function testIfAdd(value) {
