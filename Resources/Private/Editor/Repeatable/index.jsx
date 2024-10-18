@@ -4,10 +4,11 @@ import PropTypes from "prop-types";
 import { nanoid } from "nanoid";
 import { selectors } from "@neos-project/neos-ui-redux-store";
 import { neos } from "@neos-project/neos-ui-decorators";
-import { IconButton, Icon, Button, Label } from "@neos-project/react-ui-components";
+import { IconButton, Button, Label } from "@neos-project/react-ui-components";
 import backend from "@neos-project/neos-ui-backend-connector";
 import { Sortable, DragHandle } from "./Sortable";
 import Envelope from "./Envelope";
+import Loading from "./Loading";
 import { deepMerge, set, isNumeric, dynamicSort, clone, isSame, ClientEvalIsNotFinished } from "./helper";
 import style from "./style.module.css";
 
@@ -360,9 +361,7 @@ function Repeatable(props) {
                 <Label htmlFor={id}>
                     {label} {renderHelpIcon()}
                 </Label>
-                <div id={id} className={style.loading} title={i18nRegistry.translate("Neos.Neos:Main:loading")}>
-                    <Icon icon="spinner" size="lg" spin />
-                </div>
+                <Loading id={id} isLoading={isLoading} />
             </>
         );
     }

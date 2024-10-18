@@ -60,7 +60,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: var(--spacing-GoldenUnit);
+    min-height: calc(var(--spacing-GoldenUnit) * 2);
 }
 
 .simpleWrapper {
