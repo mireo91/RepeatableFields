@@ -57,10 +57,26 @@
 }
 
 .loading {
-    display: flex;
-    justify-content: center;
+    grid-template: "content" 1fr / 1fr;
+    display: grid;
     align-items: center;
+    justify-items: center;
+    width: 100%;
     min-height: calc(var(--spacing-GoldenUnit) * 2);
+
+    & > * {
+        grid-area: content;
+        transition:
+            opacity var(--transition-Default),
+            transform var(--transition-Default) ease;
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+.loadingActive {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .simpleWrapper {

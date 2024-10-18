@@ -31,36 +31,39 @@ function Loading({ id, isLoading = false, delayTime = 500, timeoutTime = 5000, i
 
     return (
         <div id={id} className={style.loading} title={`${title}…`}>
-            {showLoading == 1 && (
-                <svg
-                    width="30"
-                    height="30"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <g>
-                        <circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2" stroke-linecap="round">
-                            <Animate attributeName="stroke-dasharray" values="0 150;42 150;42 150;42 150" />
-                            <Animate attributeName="stroke-dashoffset" values="0;-16;-59;-59" />
-                        </circle>
-                        <animateTransform
-                            attributeName="transform"
-                            type="rotate"
-                            dur="2s"
-                            values="0 12 12;360 12 12"
-                            repeatCount="indefinite"
-                        />
-                    </g>
-                </svg>
-            )}
-            {showLoading == 2 && (
-                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
-                    <Circle number={3} />
-                    <Circle number={2} />
-                    <Circle number={1} />
-                </svg>
-            )}
+            <svg
+                width="30"
+                height="30"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                className={showLoading == 1 ? style.loadingActive : null}
+            >
+                <g>
+                    <circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2" stroke-linecap="round">
+                        <Animate attributeName="stroke-dasharray" values="0 150;42 150;42 150;42 150" />
+                        <Animate attributeName="stroke-dashoffset" values="0;-16;-59;-59" />
+                    </circle>
+                    <animateTransform
+                        attributeName="transform"
+                        type="rotate"
+                        dur="2s"
+                        values="0 12 12;360 12 12"
+                        repeatCount="indefinite"
+                    />
+                </g>
+            </svg>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="50"
+                height="50"
+                viewBox="0 0 24 24"
+                className={showLoading == 2 ? style.loadingActive : null}
+            >
+                <Circle number={3} />
+                <Circle number={2} />
+                <Circle number={1} />
+            </svg>
         </div>
     );
 }
