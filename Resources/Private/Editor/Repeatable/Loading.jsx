@@ -41,8 +41,27 @@ function Loading({ id, isLoading = false, delayTime = 500, timeoutTime = 5000, i
             >
                 <g>
                     <circle cx="12" cy="12" r="9.5" fill="none" stroke-width="2" stroke-linecap="round">
-                        <Animate attributeName="stroke-dasharray" values="0 150;42 150;42 150;42 150" />
-                        <Animate attributeName="stroke-dashoffset" values="0;-16;-59;-59" />
+                        {[
+                            {
+                                attribute: "dasharray",
+                                values: "0 150;42 150;42 150;42 150",
+                            },
+                            {
+                                attribute: "dashoffset",
+                                values: "0;-16;-59;-59",
+                            },
+                        ].map(({ attribute, values }) => (
+                            <animate
+                                key={attribute}
+                                attributeName={`stroke-${attribute}`}
+                                values={values}
+                                dur="1.5s"
+                                calcMode="spline"
+                                keyTimes="0;0.475;0.95;1"
+                                keySplines="0.42,0,0.58,1;0.42,0,0.58,1;0.42,0,0.58,1"
+                                repeatCount="indefinite"
+                            />
+                        ))}
                     </circle>
                     <animateTransform
                         attributeName="transform"
@@ -60,44 +79,25 @@ function Loading({ id, isLoading = false, delayTime = 500, timeoutTime = 5000, i
                 viewBox="0 0 24 24"
                 className={showLoading == 2 ? style.loadingActive : null}
             >
-                <Circle number={3} />
-                <Circle number={2} />
-                <Circle number={1} />
+                {[3, 2, 1].map((number) => {
+                    const cx = number * 6;
+                    const beginn = Math.round((100 / 3) * (number - 1)) / 100;
+                    return (
+                        <circle cx={cx} cy="12" r="0" fill="currentColor">
+                            <animate
+                                attributeName="r"
+                                begin={beginn}
+                                calcMode="spline"
+                                dur="1.5s"
+                                keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8"
+                                repeatCount="indefinite"
+                                values="0;2;0;0"
+                            ></animate>
+                        </circle>
+                    );
+                })}
             </svg>
         </div>
-    );
-}
-
-function Circle({ number }) {
-    const cx = number * 6;
-    const beginn = Math.round((100 / 3) * (number - 1)) / 100;
-
-    return (
-        <circle cx={cx} cy="12" r="0" fill="currentColor">
-            <animate
-                attributeName="r"
-                begin={beginn}
-                calcMode="spline"
-                dur="1.5s"
-                keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8"
-                repeatCount="indefinite"
-                values="0;2;0;0"
-            ></animate>
-        </circle>
-    );
-}
-
-function Animate({ duration, attributeName, values }) {
-    return (
-        <animate
-            attributeName={attributeName}
-            dur="1.5s"
-            calcMode="spline"
-            values={values}
-            keyTimes="0;0.475;0.95;1"
-            keySplines="0.42,0,0.58,1;0.42,0,0.58,1;0.42,0,0.58,1"
-            repeatCount="indefinite"
-        />
     );
 }
 
