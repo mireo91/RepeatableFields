@@ -99,7 +99,16 @@
 
     & .group {
         flex: 1;
+        max-width: 283px;
     }
+}
+
+.simpleWrapperTwoButtons .group {
+    max-width: 199px;
+}
+
+.simpleWrapperOneButton .group {
+    max-width: 241px;
 }
 
 .simpleButtons {

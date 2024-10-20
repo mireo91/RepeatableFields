@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { nanoid } from "nanoid";
+import clsx from "clsx";
 import { selectors } from "@neos-project/neos-ui-redux-store";
 import { neos } from "@neos-project/neos-ui-decorators";
 import { IconButton, Button, Label } from "@neos-project/react-ui-components";
@@ -242,30 +243,43 @@ function Repeatable(props) {
     function createElement(idx) {
         const isPredefined = !!options.predefinedProperties && options.predefinedProperties[idx];
         const { controls, sortBy, properties } = options;
+        const hasRemove = !isPredefined && controls.remove && allowRemove;
+        const hasMove = !isPredefined && controls.move && currentValue.length > 1;
+        const hasTwoButtons = hasRemove && hasMove;
+        const hasOneButton = hasRemove || hasMove;
 
         const propertiesCount = Object.keys(properties).length;
         if (propertiesCount === 1) {
             return (
-                <div className={style.simpleWrapper}>
+                <div
+                    className={clsx(
+                        style.simpleWrapper,
+                        hasTwoButtons ? style.simpleWrapperTwoButtons : hasOneButton && style.simpleWrapperOneButton,
+                    )}
+                >
                     {getProperties(idx)}
-                    <div class={style.simpleButtons}>
-                        {!isPredefined && controls.remove && allowRemove && (
-                            <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
-                        )}
-                        {!isPredefined && controls.move && currentValue.length > 1 && <DragHandle />}
-                    </div>
+                    {hasOneButton && (
+                        <div class={style.simpleButtons}>
+                            {hasRemove && (
+                                <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
+                            )}
+                            {hasMove && <DragHandle />}
+                        </div>
+                    )}
                 </div>
             );
         }
 
         return (
             <div className={style.wrapper}>
-                <div class={style.buttons}>
-                    {!isPredefined && controls && controls.move && currentValue.length > 1 && <DragHandle />}
-                    {!isPredefined && controls && controls.remove && allowRemove && (
-                        <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
-                    )}
-                </div>
+                {hasOneButton && (
+                    <div class={style.buttons}>
+                        {hasMove && <DragHandle />}
+                        {hasRemove && (
+                            <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
+                        )}
+                    </div>
+                )}
                 {getProperties(idx)}
             </div>
         );
