@@ -7,9 +7,9 @@ import { selectors } from "@neos-project/neos-ui-redux-store";
 import { neos } from "@neos-project/neos-ui-decorators";
 import { IconButton, Button, Label } from "@neos-project/react-ui-components";
 import backend from "@neos-project/neos-ui-backend-connector";
+import Loading from "carbon-neos-loadinganimation/LoadingWithStyles";
 import { Sortable, DragHandle } from "./Sortable";
 import Envelope from "./Envelope";
-import Loading from "./Loading";
 import { deepMerge, set, isNumeric, dynamicSort, clone, isSame, ClientEvalIsNotFinished } from "./helper";
 import style from "./style.module.css";
 
@@ -375,7 +375,7 @@ function Repeatable(props) {
                 <Label htmlFor={id}>
                     {label} {renderHelpIcon()}
                 </Label>
-                <Loading id={id} isLoading={isLoading} />
+                <Loading id={id} isLoading={isLoading} delayTime={2000} timeoutTime={7000} heightMultiplier={2} />
             </>
         );
     }
