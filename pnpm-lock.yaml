@@ -12,14 +12,14 @@ importers:
         specifier: ^0.8.2
         version: 0.8.2
       '@neos-project/neos-ui-extensibility':
-        specifier: ~8.3.10
-        version: 8.3.10
+        specifier: ~8.3.11
+        version: 8.3.11
       array-move:
         specifier: ^4.0.0
         version: 4.0.0
       carbon-neos-loadinganimation:
-        specifier: ^0.1.0
-        version: 0.1.0(@neos-project/neos-ui-extensibility@8.3.10)
+        specifier: ^1.0.0
+        version: 1.0.0(@neos-project/neos-ui-extensibility@8.3.11)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -198,18 +198,18 @@ packages:
   '@formkit/auto-animate@0.8.2':
     resolution: {integrity: sha512-SwPWfeRa5veb1hOIBMdzI+73te5puUBHmqqaF1Bu7FjvxlYSz/kJcZKSa9Cg60zL0uRNeJL2SbRxV6Jp6Q1nFQ==}
 
-  '@neos-project/neos-ui-extensibility@8.3.10':
-    resolution: {integrity: sha512-cLj8iju4JIjFExjbCi2SL88DLKx8LQI7v3A4deKiXD7aigOTBprdVUwWMC4DRgNZ6tQKsWnwiQI3g0Qji+8+CQ==}
+  '@neos-project/neos-ui-extensibility@8.3.11':
+    resolution: {integrity: sha512-thhE0LBNTA/FclFcz42JWsYSIODtb3QUSl9+JZBk7npB6xxsuaxaU9SDqT9MwS72X//qKwqnU01fDW/w/yrlIg==}
 
-  '@neos-project/positional-array-sorter@8.3.10':
-    resolution: {integrity: sha512-HzF/6b7FJdGzVPKeI4ga1kKHMqxNzWCW+AGvRjjXdc3Hxfzox2OgZ/jS421StKESvCnhmTQCWY1GamxSB3FuqA==}
+  '@neos-project/positional-array-sorter@8.3.11':
+    resolution: {integrity: sha512-Bo1JjzidH3yUFeBcr0e0sv+K8VAdDmO1gqTMpRusfozV+kR0Rcmb2qJJ/dgNaHI6BcNpecLZF6EJDzrqwO1Ueg==}
 
   array-move@4.0.0:
     resolution: {integrity: sha512-+RY54S8OuVvg94THpneQvFRmqWdAHeqtMzgMW6JNurHxe8rsS07cHQdfGkXnTUXiBcyZ0j3SiDIxxj0RPiqCkQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  carbon-neos-loadinganimation@0.1.0:
-    resolution: {integrity: sha512-q95lNxFv3rsADYi5obGMjkRf9etkfSbJB7zwo802Iews/8jEf1u2B01XH03jhNT4jUohJi96nSHYHzCYQJ7k3Q==}
+  carbon-neos-loadinganimation@1.0.0:
+    resolution: {integrity: sha512-/JvI+4CicCkahm17O2XzWNANH3Fn8k401v7uozwxqm/a/Z6im+09WmAbHn2otvR7Q2W+d7PvTsCpOpPJ5+lO7g==}
     peerDependencies:
       '@neos-project/neos-ui-extensibility': ^8.3.0 || ^9.0.0
 
@@ -431,17 +431,17 @@ snapshots:
 
   '@formkit/auto-animate@0.8.2': {}
 
-  '@neos-project/neos-ui-extensibility@8.3.10':
+  '@neos-project/neos-ui-extensibility@8.3.11':
     dependencies:
-      '@neos-project/positional-array-sorter': 8.3.10
+      '@neos-project/positional-array-sorter': 8.3.11
 
-  '@neos-project/positional-array-sorter@8.3.10': {}
+  '@neos-project/positional-array-sorter@8.3.11': {}
 
   array-move@4.0.0: {}
 
-  carbon-neos-loadinganimation@0.1.0(@neos-project/neos-ui-extensibility@8.3.10):
+  carbon-neos-loadinganimation@1.0.0(@neos-project/neos-ui-extensibility@8.3.11):
     dependencies:
-      '@neos-project/neos-ui-extensibility': 8.3.10
+      '@neos-project/neos-ui-extensibility': 8.3.11
 
   clsx@2.1.1: {}
 
