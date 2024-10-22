@@ -375,7 +375,7 @@ function Repeatable(props) {
                 <Label htmlFor={id}>
                     {label} {renderHelpIcon()}
                 </Label>
-                <Loading id={id} isLoading={isLoading} delayTime={2000} timeoutTime={7000} heightMultiplier={2} />
+                <Loading id={id} isLoading={isLoading} heightMultiplier={2} />
             </>
         );
     }
