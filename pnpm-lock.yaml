@@ -18,8 +18,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       carbon-neos-loadinganimation:
-        specifier: ^1.0.0
-        version: 1.0.0(@neos-project/neos-ui-extensibility@8.3.11)
+        specifier: ^1.1.1
+        version: 1.1.1(@neos-project/neos-ui-extensibility@8.3.11)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -208,8 +208,8 @@ packages:
     resolution: {integrity: sha512-+RY54S8OuVvg94THpneQvFRmqWdAHeqtMzgMW6JNurHxe8rsS07cHQdfGkXnTUXiBcyZ0j3SiDIxxj0RPiqCkQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  carbon-neos-loadinganimation@1.0.0:
-    resolution: {integrity: sha512-/JvI+4CicCkahm17O2XzWNANH3Fn8k401v7uozwxqm/a/Z6im+09WmAbHn2otvR7Q2W+d7PvTsCpOpPJ5+lO7g==}
+  carbon-neos-loadinganimation@1.1.1:
+    resolution: {integrity: sha512-x0xjMyMdYEEZxe+Qn2Q077PPdr7SAuJ6b7B7mTT/550KZPaHCIKdPHNnWt9O20/811cPGv+tU4wSXCaDvExJVw==}
     peerDependencies:
       '@neos-project/neos-ui-extensibility': ^8.3.0 || ^9.0.0
 
@@ -439,7 +439,7 @@ snapshots:
 
   array-move@4.0.0: {}
 
-  carbon-neos-loadinganimation@1.0.0(@neos-project/neos-ui-extensibility@8.3.11):
+  carbon-neos-loadinganimation@1.1.1(@neos-project/neos-ui-extensibility@8.3.11):
     dependencies:
       '@neos-project/neos-ui-extensibility': 8.3.11
 
