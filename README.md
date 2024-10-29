@@ -65,6 +65,9 @@ Create property with type `reapeatable`.
 #                ...
             properties:
               field0:
+                # The order of the fields can be altered by setting position. It is the same logic as @position in Fusion
+                # https://neos.readthedocs.io/en/stable/References/NeosFusionReference.html#neos-fusion-join
+                position: 10
                 editorOptions:
                   placeholder: 'default field editor'
               field1:

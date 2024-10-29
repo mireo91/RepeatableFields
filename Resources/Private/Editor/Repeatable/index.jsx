@@ -7,6 +7,7 @@ import { selectors } from "@neos-project/neos-ui-redux-store";
 import { neos } from "@neos-project/neos-ui-decorators";
 import { IconButton, Button, Label } from "@neos-project/react-ui-components";
 import backend from "@neos-project/neos-ui-backend-connector";
+import positionalArraySorter from "@neos-project/positional-array-sorter";
 import Loading from "carbon-neos-loadinganimation/LoadingWithStyles";
 import { Sortable, DragHandle } from "./Sortable";
 import Envelope from "./Envelope";
@@ -112,9 +113,15 @@ function Repeatable(props) {
         let group = {};
         const properties = options.properties;
         if (properties) {
-            Object.entries(properties).forEach(([property, item]) => {
+            // Create array to enable sorting
+            const array = [];
+            for (const key in properties) {
+                const item = properties[key];
+                array.push({ key, position: item?.position ?? null, item });
+            }
+            positionalArraySorter(array).forEach(({ key, item }) => {
                 const defaultValue = item && item.defaultValue;
-                group[property] = returnValueIfSet(defaultValue, "");
+                group[key] = returnValueIfSet(defaultValue, "");
             });
         }
         return group;
@@ -292,6 +299,8 @@ function Repeatable(props) {
         Object.keys(emptyGroup).map((property) => {
             properties.push(getProperty(property, idx));
         });
+
+        // positionalArraySorter
 
         return (
             <div className={style.group}>

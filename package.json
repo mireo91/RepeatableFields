@@ -10,6 +10,7 @@
   "devDependencies": {
     "@formkit/auto-animate": "^0.8.2",
     "@neos-project/neos-ui-extensibility": "~8.3.11",
+    "@neos-project/positional-array-sorter": "^8.3.11",
     "array-move": "^4.0.0",
     "carbon-neos-loadinganimation": "^1.1.1",
     "clsx": "^2.1.1",
