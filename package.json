@@ -1,0 +1,25 @@
+{
+  "description": "Repeatable Field",
+  "license": "GNU GPLv3",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs --production",
+    "watch": "node build.mjs --watch",
+    "dev": "node build.mjs"
+  },
+  "devDependencies": {
+    "@formkit/auto-animate": "^0.8.2",
+    "@neos-project/neos-ui-extensibility": "~8.3.11",
+    "@neos-project/positional-array-sorter": "^8.3.11",
+    "array-move": "^4.0.0",
+    "carbon-neos-loadinganimation": "^1.1.1",
+    "clsx": "^2.1.1",
+    "esbuild": "^0.24.0",
+    "esbuild-plugin-lightningcss-modules": "^0.1.2",
+    "lodash.omit": "^4.5.0",
+    "nanoid": "^5.0.7",
+    "prettier": "^3.3.3",
+    "prop-types": "^15.8.1",
+    "react-sortable-hoc": "^2.0.0"
+  }
+}

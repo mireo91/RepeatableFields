@@ -1,14 +1,13 @@
 <?php
+
 namespace Mireo\RepeatableFields\TypeConverter;
 
 use Mireo\RepeatableFields\Model\Repeatable;
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\Neos\Ui\Domain\Service\NodePropertyConversionService;
-use Neos\Utility\Arrays;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
@@ -59,14 +58,14 @@ class RepeatableConverter extends AbstractTypeConverter
         $context = $configuration->getConfigurationValue('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'context');
         $properties = $configuration->getConfigurationValue('Mireo\RepeatableFields\TypeConverter\RepeatableConverter', 'properties');
 
-        if( !is_array($source) )
+        if (!is_array($source)) {
             $source = json_decode($source);
+        }
 
         $repeatable = new Repeatable((array)$source, $context, $properties);
-//        \Neos\Flow\var_dump(Arrays::getValueByPath($repeatable, "."));
-//        \Neos\Flow\var_dump(is_array($repeatable));
-//        \Neos\Flow\var_dump($repeatable[0]);exit;
+        //        \Neos\Flow\var_dump(Neos\Utility\Arrays::getValueByPath($repeatable, "."));
+        //        \Neos\Flow\var_dump(is_array($repeatable));
+        //        \Neos\Flow\var_dump($repeatable[0]);exit;
         return $repeatable;
     }
-
 }

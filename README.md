@@ -1,4 +1,5 @@
 # RepeatableFields
+
 Neos package for adding repeatables fields to neos-ui react
 
 ## Demo View
@@ -31,7 +32,7 @@ Create property with type `reapeatable`.
 #            dataSourceDisableCaching: false
 #            dataSourceAdditionalData:
 #              apiKey: 'foo-bar-baz'
-            buttonAddLabel: 'Add row' #default lable
+            buttonAddLabel: 'Add row' #default label
             max: 100 #default max
             min: 0   #default min
             indexKey: field0 # when set nested data are not available but you can get data like (.property("repeatableProperty.[value of field0].field1"))
@@ -39,6 +40,13 @@ Create property with type `reapeatable`.
               move: true
               remove: true
               add: true
+            # Automatically sort by on property
+            # Should only used with numeric or string values
+            # You can pass multiple properties
+            sortBy:
+              - property: field0
+                direction: desc # asc or desc. If not set, it will be asc
+              - property: field1
             predefinedProperties:
               - label: Group label
                 properties:
@@ -56,7 +64,10 @@ Create property with type `reapeatable`.
                     defaultValue: defalut value for index 2 field0
 #                ...
             properties:
-              filed0:
+              field0:
+                # The order of the fields can be altered by setting position. It is the same logic as @position in Fusion
+                # https://neos.readthedocs.io/en/stable/References/NeosFusionReference.html#neos-fusion-join
+                position: 10
                 editorOptions:
                   placeholder: 'default field editor'
               field1:
@@ -71,9 +82,13 @@ Create property with type `reapeatable`.
                   placeholder: 'test placeholder 2'
 ```
 
+## Important notice
+
+Please don't name any property (in the example `fieldN`) `_UUID_`, as this is used internaly to set a unique key to the items
+
 ## Nested
 
-In fusion you can get data by path  `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field
+In fusion you can get data by path `q(node).property('repetableProperty').field1` so you get nested data form specific repeatable field
 
 ## Important changes between v1.x.x
 

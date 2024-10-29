@@ -1,9 +1,8 @@
 <?php
+
 namespace Mireo\RepeatableFields\TypeConverter;
 
 use Mireo\RepeatableFields\Model\Repeatable;
-use Neos\Error\Messages\Error;
-use Neos\Flow\Property\Exception;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mireo\RepeatableFields\Model;
 
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -12,7 +13,8 @@ use Neos\Utility\Arrays;
  *
  * @api
  */
-class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAccess {
+class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAccess
+{
 
     /**
      * @Flow\Inject
@@ -50,19 +52,21 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      */
     private $proprties;
 
-    public function __construct(array $source, $context, $properties) {
+    public function __construct(array $source, $context, $properties)
+    {
         $this->proprties = $properties;
         $this->context = $context;
         $this->source = $source;
     }
 
-    public function initializeObject(){
+    public function initializeObject()
+    {
         $source = $this->source;
         $context = $this->context;
         $properties = $this->proprties;
         $convertedProps = [];
         $byIndexes = [];
-        if( $source && $context && $properties ) {
+        if ($source && $context && $properties) {
             if (!is_array($source)) {
                 $source = json_decode($source, true) ?? [];
             }
@@ -71,37 +75,39 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
             }
             foreach ($source as $key => $group) {
                 $indexKey = null;
-                if( isset($properties["indexKey"]) )
+                if (isset($properties["indexKey"])) {
                     $indexKey = $group[$properties["indexKey"]];
+                }
                 foreach ($group as $index => $val) {
-                    if ( isset($val) && $val!=="" ) {
-                        $conf = $properties["properties"][$index]??null;
+                    if (isset($val) && $val !== "") {
+                        $conf = $properties["properties"][$index] ?? null;
                         $targ = $conf['type'] ?? 'string';
 
-                        if( $targ == "repeatable"){
-                            $v = new Repeatable(is_array($val)?$val:[], $context, $conf["editorOptions"]);
-//                            \Neos\Flow\var_dump($v);exit;
-                        }else{
+                        if ($targ == "repeatable") {
+                            $v = new Repeatable(is_array($val) ? $val : [], $context, $conf["editorOptions"]);
+                            //                            \Neos\Flow\var_dump($v);exit;
+                        } else {
                             $propConf = [
-                                'properties' => [$index => [ 'type' => $targ ]]
+                                'properties' => [$index => ['type' => $targ]]
                             ];
-                            $nodeType = new NodeType('test',[],$propConf);
+                            $nodeType = new NodeType('test', [], $propConf);
                             $nodeType->getFullConfiguration();
                             $v = $this->nodePropertyConversionService->convert($nodeType, $index, $val, $context);
                         }
-//                        $byIndexes[$index][] = $v;
+                        //                        $byIndexes[$index][] = $v;
                     } else {
                         $v = $val;
                     }
-                    if( $indexKey == null )
+                    if ($indexKey == null) {
                         $byIndexes[$index][] = $v;
-                    else
+                    } else {
                         $byIndexes[$indexKey][$index] = $v;
+                    }
                     $convertedProps[$key][$index] = $v;
                 }
             }
         }
-//        \Neos\Flow\var_dump($byIndexes);exit;
+        //        \Neos\Flow\var_dump($byIndexes);exit;
         $this->byGroups = $convertedProps;
         $this->byFields = $byIndexes;
     }
@@ -109,7 +115,8 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
     /**
      * @return array
      */
-    private function getSource(): array{
+    private function getSource(): array
+    {
         return $this->source;
     }
 
@@ -117,7 +124,8 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      * @param string $fieldPath
      * @return mixed
      */
-    public function getByGroups($fieldPath = null): mixed{
+    public function getByGroups($fieldPath = null): mixed
+    {
         return Arrays::getValueByPath($this->byGroups, $fieldPath);
     }
 
@@ -125,17 +133,19 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      * @param string $fieldPath
      * @return mixed
      */
-    public function getByFields($fieldPath = null): mixed{
-        if( !$fieldPath ){
+    public function getByFields($fieldPath = null): mixed
+    {
+        if (!$fieldPath) {
             return $this->byFields;
         }
-        if( is_string($fieldPath) && isset($this->byFields[$fieldPath]) ){
+        if (is_string($fieldPath) && isset($this->byFields[$fieldPath])) {
             return $this->byFields[$fieldPath];
         }
         return Arrays::getValueByPath($this->byFields, $fieldPath);
     }
 
-    public function count(): int{
+    public function count(): int
+    {
         $value = $this->toArray();
         if (!is_array($value)) {
             return 0;
@@ -149,7 +159,8 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      * @return mixed Can return any type.
      * @since 5.0.0
      */
-    public function current(){
+    public function current()
+    {
         return $this->byGroups[$this->position];
     }
 
@@ -159,7 +170,8 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      * @return void Any returned value is ignored.
      * @since 5.0.0
      */
-    public function next(){
+    public function next()
+    {
         $this->position++;
     }
 
@@ -169,7 +181,8 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      * @return mixed scalar on success, or null on failure.
      * @since 5.0.0
      */
-    public function key(){
+    public function key()
+    {
         return $this->position;
     }
 
@@ -180,9 +193,11 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      * Returns true on success or false on failure.
      * @since 5.0.0
      */
-    public function valid(){
-        if( isset($this->byGroups[$this->position]) )
+    public function valid()
+    {
+        if (isset($this->byGroups[$this->position])) {
             return true;
+        }
         return false;
     }
 
@@ -192,7 +207,8 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
      * @return void Any returned value is ignored.
      * @since 5.0.0
      */
-    public function rewind(){
+    public function rewind()
+    {
         $this->position = 0;
     }
 
@@ -207,11 +223,12 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
     }
 
     public function __toString()
-   {
-       return json_encode($this->source);
-   }
+    {
+        return json_encode($this->source);
+    }
 
-    private function testFieldType($offset){
+    private function testFieldType($offset)
+    {
         return is_numeric($offset) ? true : false;
     }
 
@@ -223,9 +240,9 @@ class Repeatable implements \Iterator, \JsonSerializable, \Countable, \ArrayAcce
     public function offsetGet(mixed $offset): mixed
     {
         $offset = explode(".", $offset);
-        if( $this->testFieldType($offset[0]) ){
+        if ($this->testFieldType($offset[0])) {
             return $this->getByGroups($offset);
-        }else{
+        } else {
             return $this->getByFields($offset);
         }
     }

@@ -1,0 +1,110 @@
+.wrapper {
+    position: relative;
+    background: var(--colors-ContrastDarkest);
+    border: 1px dashed var(--colors-ContrastNeutral);
+    border-left: none;
+    border-right: none;
+    padding: var(--spacing-Full);
+    margin: 0 calc(var(--spacing-Full) * -1) 10px;
+}
+
+.noSelect :not(.move) {
+    user-select: none !important;
+    pointer-events: none !important;
+}
+
+.property {
+    margin-top: 10px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    color: var(--colors-ContrastBrightest);
+    font-size: var(--fontSize-Base);
+    gap: 10px;
+
+    & > * {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--spacing-GoldenUnit);
+        min-width: var(--spacing-GoldenUnit);
+        background-color: var(--colors-ContrastNeutral);
+    }
+
+    &:empty {
+        display: none;
+    }
+}
+
+.delete {
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--colors-Error) !important;
+    }
+}
+
+.move {
+    flex: 1;
+    cursor: grab;
+
+    &:hover {
+        background-color: var(--colors-ContrastDark);
+    }
+}
+
+.simpleWrapper {
+    display: flex;
+    position: relative;
+    column-gap: 2px;
+    margin-bottom: 10px;
+
+    & label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    & .group {
+        flex: 1;
+        max-width: 283px;
+    }
+}
+
+.simpleWrapperTwoButtons .group {
+    max-width: 199px;
+}
+
+.simpleWrapperOneButton .group {
+    max-width: 241px;
+}
+
+.simpleButtons {
+    display: flex;
+    justify-content: flex-end;
+    color: var(--colors-ContrastBrightest);
+    font-size: var(--fontSize-Base);
+    gap: 2px;
+
+    & > * {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--spacing-GoldenUnit);
+        min-width: var(--spacing-GoldenUnit);
+        background-color: var(--colors-ContrastNeutral);
+    }
+
+    &:empty {
+        display: none;
+    }
+}

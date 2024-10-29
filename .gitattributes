@@ -1,2 +1,12 @@
 /.gitattributes export-ignore
 /repeatable.gif export-ignore
+/Resources/Private/Editor export-ignore
+/.editorconfig export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/.nvmrc export-ignore
+/.prettierrc export-ignore
+/build.mjs export-ignore
+/Makefile export-ignore
+/package.json export-ignore
+/pnpm-lock.yaml export-ignore
