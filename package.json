@@ -17,7 +17,7 @@
     "esbuild": "^0.24.0",
     "esbuild-plugin-lightningcss-modules": "^0.1.2",
     "lodash.omit": "^4.5.0",
-    "nanoid": "^5.0.7",
+    "nanoid": "^5.0.9",
     "prettier": "^3.3.3",
     "prop-types": "^15.8.1",
     "react-sortable-hoc": "^2.0.0"
