@@ -14,7 +14,7 @@
     "array-move": "^4.0.0",
     "carbon-neos-loadinganimation": "^1.1.1",
     "clsx": "^2.1.1",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.25.0",
     "esbuild-plugin-lightningcss-modules": "^0.1.2",
     "lodash.omit": "^4.5.0",
     "nanoid": "^5.0.7",
