@@ -234,7 +234,8 @@ function Repeatable(props) {
         });
         const validationResultsArray = validationResults.filter((result) => result);
         if (options.controls && options.controls.add) {
-            setAllowAdd(validationResultsArray.length <= 0);
+            const allowed = options?.max ? options.max > currentValue.length : true;
+            setAllowAdd(allowed && validationResultsArray.length <= 0);
         }
         return validationResultsArray;
     }
