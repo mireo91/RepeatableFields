@@ -1,4 +1,4 @@
-.PHONY: help install watch dev production build prettier
+.PHONY: help install watch dev production build prettier upgrade
 
 .DEFAULT_GOAL := production
 
@@ -13,7 +13,6 @@ production: install prettier build
 install:
 	pnpm install
 
-
 ## Watch for changes in JS and CSS files
 watch:
 	pnpm watch
@@ -25,6 +24,12 @@ dev:
 ## Build production version
 build:
 	pnpm build
+
+## Upgrade dependencies
+upgrade:
+	corepack use pnpm@latest
+	pnpm up --latest --interactive
+	pnpm upgrade
 
 # Define colors
 GREEN  := $(shell tput -Txterm setaf 2)
