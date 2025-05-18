@@ -10,3 +10,4 @@
 /Makefile export-ignore
 /package.json export-ignore
 /pnpm-lock.yaml export-ignore
+/pnpm-workspace.yaml export-ignore
