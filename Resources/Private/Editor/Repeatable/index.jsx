@@ -46,6 +46,7 @@ function Repeatable(props) {
     const [currentValue, setCurrentValue] = useState([]);
     const [options, setOptions] = useState(hasDataSource ? null : props.options);
     const [emptyGroup, setEmptyGroup] = useState({});
+    const [collapsed, setCollapsed] = useState({});
 
     // We use this hack to prevent the editor from re-rendering all the time, even if the options are the same.
     const returnCurrentValueAsJSON = () => JSON.stringify(currentValue);
@@ -219,6 +220,14 @@ function Repeatable(props) {
         handleValueChange(value);
     }
 
+    handleCollapse = (idx) => {
+        const value = !collapsed[idx];
+        setCollapsed({
+            ...collapsed,
+            [idx]: value,
+        });
+    }
+
     function commitChange(idx, property, event) {
         handleValueChange(set(property, event, currentValue));
     }
@@ -251,11 +260,11 @@ function Repeatable(props) {
     function createElement(idx) {
         const isPredefined = !!options.predefinedProperties && options.predefinedProperties[idx];
         const { controls, sortBy, properties } = options;
+
         const hasRemove = !isPredefined && controls.remove && allowRemove;
         const hasMove = !isPredefined && controls.move && currentValue.length > 1;
         const hasTwoButtons = hasRemove && hasMove;
         const hasOneButton = hasRemove || hasMove;
-
         const propertiesCount = Object.keys(properties).length;
         if (propertiesCount === 1) {
             return (
@@ -280,15 +289,18 @@ function Repeatable(props) {
 
         return (
             <div className={style.wrapper}>
-                {hasOneButton && (
+                {Boolean(hasOneButton || hasCollapse) && (
                     <div class={style.buttons}>
                         {hasMove && <DragHandle />}
+                        {!!controls.collapse && (
+                            <IconButton onClick={() => handleCollapse(idx)} icon={collapsed[idx] ? "chevron-up" : "chevron-down"} />
+                        )}
                         {hasRemove && (
                             <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
                         )}
                     </div>
                 )}
-                {getProperties(idx)}
+                {!collapsed[idx] && getProperties(idx)}
             </div>
         );
     }
@@ -451,6 +463,7 @@ Repeatable.propTypes = {
             move: PropTypes.bool,
             remove: PropTypes.bool,
             add: PropTypes.bool,
+            collapse: PropTypes.bool,
         }),
         sortBy: PropTypes.arrayOf(
             PropTypes.shape({

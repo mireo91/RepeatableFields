@@ -37,6 +37,10 @@
     &:empty {
         display: none;
     }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .delete {
