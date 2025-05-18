@@ -293,7 +293,7 @@ function Repeatable(props) {
                     <div class={style.buttons}>
                         {hasMove && <DragHandle />}
                         {!!controls.collapse && (
-                            <IconButton onClick={() => handleCollapse(idx)} icon={collapsed[idx] ? "chevron-up" : "chevron-down"} />
+                            <IconButton onClick={() => handleCollapse(idx)} icon={collapsed[idx] ? "chevron-down" : "chevron-up"} />
                         )}
                         {hasRemove && (
                             <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
