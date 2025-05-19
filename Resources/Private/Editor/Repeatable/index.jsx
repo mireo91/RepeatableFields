@@ -394,9 +394,11 @@ function Repeatable(props) {
     if (isLoading || !options) {
         return (
             <>
-                <Label htmlFor={id}>
-                    {label} {renderHelpIcon()}
-                </Label>
+                {Boolean(label) && (
+                    <Label htmlFor={id}>
+                        {label} {renderHelpIcon()}
+                    </Label>
+                )}
                 <Loading id={id} isLoading={isLoading} heightMultiplier={2} />
             </>
         );
@@ -410,9 +412,11 @@ function Repeatable(props) {
 
     return (
         <>
-            <Label htmlFor={id}>
-                {label} {renderHelpIcon()}
-            </Label>
+            {Boolean(label) && (
+                <Label htmlFor={id}>
+                    {label} {renderHelpIcon()}
+                </Label>
+            )}
             <Sortable
                 element={createElement}
                 items={currentValue}
@@ -423,7 +427,10 @@ function Repeatable(props) {
                 KEY_PROPERTY={KEY_PROPERTY}
             />
             {options.controls.add && allowAdd && (
-                <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>
+                <>
+                    <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>
+                    {Boolean(label) || renderHelpIcon()}
+                </>
             )}
         </>
     );
