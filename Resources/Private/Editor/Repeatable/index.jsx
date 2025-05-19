@@ -287,12 +287,14 @@ function Repeatable(props) {
             );
         }
 
+        const hasCollapse = !!controls.collapse;
+
         return (
             <div className={style.wrapper}>
                 {Boolean(hasOneButton || hasCollapse) && (
                     <div class={style.buttons}>
                         {hasMove && <DragHandle />}
-                        {!!controls.collapse && (
+                        {hasCollapse && (
                             <IconButton onClick={() => handleCollapse(idx)} icon={collapsed[idx] ? "chevron-down" : "chevron-up"} />
                         )}
                         {hasRemove && (
