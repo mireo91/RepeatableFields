@@ -40,6 +40,7 @@ Create property with type `reapeatable`.
               move: true
               remove: true
               add: true
+              collapse: true
             # Automatically sort by on property
             # Should only used with numeric or string values
             # You can pass multiple properties

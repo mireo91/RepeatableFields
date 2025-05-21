@@ -46,6 +46,7 @@ function Repeatable(props) {
     const [currentValue, setCurrentValue] = useState([]);
     const [options, setOptions] = useState(hasDataSource ? null : props.options);
     const [emptyGroup, setEmptyGroup] = useState({});
+    const [collapsed, setCollapsed] = useState({});
 
     // We use this hack to prevent the editor from re-rendering all the time, even if the options are the same.
     const returnCurrentValueAsJSON = () => JSON.stringify(currentValue);
@@ -219,6 +220,14 @@ function Repeatable(props) {
         handleValueChange(value);
     }
 
+    handleCollapse = (idx) => {
+        const value = !collapsed[idx];
+        setCollapsed({
+            ...collapsed,
+            [idx]: value,
+        });
+    }
+
     function commitChange(idx, property, event) {
         handleValueChange(set(property, event, currentValue));
     }
@@ -251,11 +260,11 @@ function Repeatable(props) {
     function createElement(idx) {
         const isPredefined = !!options.predefinedProperties && options.predefinedProperties[idx];
         const { controls, sortBy, properties } = options;
+
         const hasRemove = !isPredefined && controls.remove && allowRemove;
         const hasMove = !isPredefined && controls.move && currentValue.length > 1;
         const hasTwoButtons = hasRemove && hasMove;
         const hasOneButton = hasRemove || hasMove;
-
         const propertiesCount = Object.keys(properties).length;
         if (propertiesCount === 1) {
             return (
@@ -278,17 +287,22 @@ function Repeatable(props) {
             );
         }
 
+        const hasCollapse = !!controls.collapse;
+
         return (
             <div className={style.wrapper}>
-                {hasOneButton && (
+                {Boolean(hasOneButton || hasCollapse) && (
                     <div class={style.buttons}>
                         {hasMove && <DragHandle />}
+                        {hasCollapse && (
+                            <IconButton onClick={() => handleCollapse(idx)} icon={collapsed[idx] ? "chevron-down" : "chevron-up"} />
+                        )}
                         {hasRemove && (
                             <IconButton onClick={() => handleRemove(idx)} className={style.delete} icon="trash" />
                         )}
                     </div>
                 )}
-                {getProperties(idx)}
+                {!collapsed[idx] && getProperties(idx)}
             </div>
         );
     }
@@ -382,9 +396,11 @@ function Repeatable(props) {
     if (isLoading || !options) {
         return (
             <>
-                <Label htmlFor={id}>
-                    {label} {renderHelpIcon()}
-                </Label>
+                {Boolean(label) && (
+                    <Label htmlFor={id}>
+                        {label} {renderHelpIcon()}
+                    </Label>
+                )}
                 <Loading id={id} isLoading={isLoading} heightMultiplier={2} />
             </>
         );
@@ -398,9 +414,11 @@ function Repeatable(props) {
 
     return (
         <>
-            <Label htmlFor={id}>
-                {label} {renderHelpIcon()}
-            </Label>
+            {Boolean(label) && (
+                <Label htmlFor={id}>
+                    {label} {renderHelpIcon()}
+                </Label>
+            )}
             <Sortable
                 element={createElement}
                 items={currentValue}
@@ -411,7 +429,10 @@ function Repeatable(props) {
                 KEY_PROPERTY={KEY_PROPERTY}
             />
             {options.controls.add && allowAdd && (
-                <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>
+                <>
+                    <Button onClick={handleAdd}>{i18nRegistry.translate(buttonAddLabel)}</Button>
+                    {Boolean(label) || renderHelpIcon()}
+                </>
             )}
         </>
     );
@@ -451,6 +472,7 @@ Repeatable.propTypes = {
             move: PropTypes.bool,
             remove: PropTypes.bool,
             add: PropTypes.bool,
+            collapse: PropTypes.bool,
         }),
         sortBy: PropTypes.arrayOf(
             PropTypes.shape({

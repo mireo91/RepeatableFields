@@ -26,6 +26,7 @@ Neos:
                 move: true
                 remove: true
                 add: true
+                collapse: true
     Ui:
       resources:
         javascript:
