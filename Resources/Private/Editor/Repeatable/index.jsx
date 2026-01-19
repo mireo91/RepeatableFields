@@ -58,6 +58,8 @@ function Repeatable({
     const [options, setOptions] = useState(hasDataSource ? null : props.options);
     const [emptyGroup, setEmptyGroup] = useState({});
     const [collapsed, setCollapsed] = useState({});
+    // Separate state for resolved references - used ONLY for preview, never merged into currentValue
+    const [resolvedReferences, setResolvedReferences] = useState({});
 
     // We use this hack to prevent the editor from re-rendering all the time, even if the options are the same.
     const returnCurrentValueAsJSON = () => JSON.stringify(currentValue);
@@ -120,6 +122,52 @@ function Repeatable({
             setLoading(false);
         });
     }, [dataSourceIdentifier, dataSourceUri, dataSourceAdditionalData]);
+
+    // Fetch resolved reference data for preview - stored separately, never modifies currentValue
+    useEffect(() => {
+        if (!options?.properties || !currentValue?.length) {
+            return;
+        }
+
+        // Find properties that are reference types
+        const referenceProperties = Object.entries(options.properties)
+            .filter(([, config]) => config?.type === "reference")
+            .map(([name]) => name);
+
+        if (referenceProperties.length === 0) {
+            return;
+        }
+
+        // Collect all unique node identifiers from reference properties
+        const identifiers = new Set();
+        currentValue.forEach((item) => {
+            referenceProperties.forEach((propName) => {
+                const value = item[propName];
+                if (typeof value === "string" && value) {
+                    identifiers.add(value);
+                }
+            });
+        });
+
+        if (identifiers.size === 0) {
+            return;
+        }
+
+        // Fetch resolved reference data from the DataSource
+        backend
+            .get()
+            .endpoints.dataSource("resolve-references", null, {
+                identifiers: Array.from(identifiers),
+            })
+            .then((resolved) => {
+                if (resolved && typeof resolved === "object") {
+                    setResolvedReferences(resolved);
+                }
+            })
+            .catch((error) => {
+                console.warn("Failed to resolve references for preview:", error);
+            });
+    }, [currentValue, options?.properties]);
 
     function getEmptyGroup() {
         let group = {};
@@ -366,11 +414,21 @@ function Repeatable({
         if (!text && !image) {
             return null;
         }
+
+        // Create a TEMPORARY enriched copy for preview evaluation ONLY
+        // This does NOT modify currentValue or affect editors
+        const itemForPreview = { ...currentValue[idx] };
+        for (const [propName, value] of Object.entries(itemForPreview)) {
+            if (typeof value === "string" && resolvedReferences[value]) {
+                itemForPreview[propName] = resolvedReferences[value];
+            }
+        }
+
         if (text) {
-            text = ItemEvalRecursive(text, currentValue[idx], props.node, props.parentNode, props.documentNode);
+            text = ItemEvalRecursive(text, itemForPreview, props.node, props.parentNode, props.documentNode);
         }
         if (image) {
-            image = ItemEvalRecursive(image, currentValue[idx], props.node, props.parentNode, props.documentNode);
+            image = ItemEvalRecursive(image, itemForPreview, props.node, props.parentNode, props.documentNode);
         }
         return <Preview text={i18nRegistry.translate(text)} image={image} />;
     }
