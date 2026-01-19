@@ -68,7 +68,7 @@ Create property with type `reapeatable`.
 #                ...
             # collapse view on load. controls.collapse must be true. defaults to false
             collapsed: true
-            # Set preview
+            # Set preview (see "Preview with Reference Properties" section below)
             preview:
               text:  'ItemEval: item.field0'
               image: 'ItemEval: item.field1'
@@ -92,6 +92,52 @@ Create property with type `reapeatable`.
                 editorOptions:
                   placeholder: 'test placeholder 2'
 ```
+
+## Preview with Reference Properties
+
+When using `reference` type properties in a repeatable field, you can access the referenced node's properties in preview expressions. This allows you to display meaningful information like a person's name instead of just the node identifier.
+
+### Example
+
+```YAML
+properties:
+  teamMembers:
+    type: repeatable
+    ui:
+      inspector:
+        editorOptions:
+          collapsed: true
+          preview:
+            text: 'ItemEval: item.person?.properties?.firstName + " " + item.person?.properties?.lastName'
+          properties:
+            person:
+              type: reference
+              label: 'Person'
+              editorOptions:
+                nodeTypes: ['My.Package:Document.Person']
+```
+
+### Available Properties
+
+When a property is a `reference` type, the preview expression can access:
+
+**Node properties** (nested under `properties` to avoid naming collisions):
+- `item.propertyName.properties.firstName` - Any property defined on the referenced node
+- `item.propertyName.properties.lastName`
+- `item.propertyName.properties.position`
+- etc.
+
+**Metadata** (top-level):
+- `item.propertyName.label` - The node's label
+- `item.propertyName.identifier` - The node identifier (UUID)
+- `item.propertyName.nodeType` - The node type name
+- `item.propertyName.icon` - The node type icon
+
+### Notes
+
+- Reference resolution only applies to preview expressions (`preview.text` and `preview.image`)
+- Editors continue to work with the original node identifier
+- Only scalar properties (strings, numbers, booleans) are available; complex objects like images are not included
 
 ## Important notice
 
