@@ -33,10 +33,10 @@ const KEY_PROPERTY = "_UUID_";
 
 const getDataLoaderOptionsForProps = (props) => ({
     contextNodePath: props.focusedNodePath,
-    dataSourceIdentifier: props.options.dataSourceIdentifier,
-    dataSourceUri: props.options.dataSourceUri,
-    dataSourceAdditionalData: props.options.dataSourceAdditionalData,
-    dataSourceDisableCaching: Boolean(props.options.dataSourceDisableCaching),
+    dataSourceIdentifier: props.options?.dataSourceIdentifier,
+    dataSourceUri: props.options?.dataSourceUri,
+    dataSourceAdditionalData: props.options?.dataSourceAdditionalData,
+    dataSourceDisableCaching: Boolean(props.options?.dataSourceDisableCaching),
 });
 
 function Repeatable({
@@ -87,9 +87,9 @@ function Repeatable({
         setCurrentValueAsJSON(dataAsJSON);
         testIfAdd(currentValue);
         testIfRemove(currentValue);
-        if (options.sortBy) {
+        if (options?.sortBy) {
             const timeout = setTimeout(() => {
-                const sorted = dynamicSort(currentValue, options.sortBy);
+                const sorted = dynamicSort(currentValue, options?.sortBy);
                 handleValueChange(sorted);
             }, 2000);
             return () => clearTimeout(timeout);
@@ -109,7 +109,7 @@ function Repeatable({
     }, 1000);
 
     useEffect(() => {
-        if (options.sortBy) {
+        if (options?.sortBy) {
             debouncedValueChange(value);
             return;
         }
@@ -164,13 +164,13 @@ function Repeatable({
     }
 
     function testIfAdd(value) {
-        if (options && options.max) {
+        if (options?.max) {
             setAllowAdd(options.max > value.length);
         }
     }
 
     function testIfRemove(value) {
-        if (options && options.min) {
+        if (options?.min) {
             setAllowRemove(options.min < value.length);
         }
     }
@@ -222,7 +222,7 @@ function Repeatable({
     }
 
     function createElement(idx) {
-        const isPredefined = !!options.predefinedProperties && options.predefinedProperties[idx];
+        const isPredefined = options?.predefinedProperties?.[idx];
         const { controls, sortBy, properties, allowRemovePredefinedProperties } = options;
 
         const hasRemove = controls.remove && allowRemove ? !isPredefined || allowRemovePredefinedProperties : false;
@@ -351,7 +351,7 @@ function Repeatable({
 
         if (editorOptions.hasOwnProperty("dataSourceUri") || editorOptions.hasOwnProperty("dataSourceIdentifier")) {
             editorOptions = { ...editorOptions };
-            if (!editorOptions.dataSourceAdditionalData) {
+            if (!editorOptions?.dataSourceAdditionalData) {
                 editorOptions.dataSourceAdditionalData = {};
             } else {
                 if (editorOptions.dataSourceAdditionalData.hasOwnProperty("repeatableIndex")) {
@@ -416,8 +416,8 @@ function Repeatable({
                 element={createElement}
                 items={currentValue}
                 onChange={handleValueChange}
-                enable={options.controls?.move}
-                automaticSorting={options.sortBy}
+                enable={options?.controls?.move}
+                automaticSorting={options?.sortBy}
                 value={currentValue}
                 KEY_PROPERTY={KEY_PROPERTY}
             />

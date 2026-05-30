@@ -213,7 +213,7 @@ export function getInitialValue({ emptyGroup, value, KEY_PROPERTY, options }) {
 
     if (result.length) {
         for (let key = 0; key < result.length; key++) {
-            const predefined = options.predefinedProperties?.[key]?.properties;
+            const predefined = options?.predefinedProperties?.[key]?.properties;
             const currentEntry = clone(result[key]);
             const availableKeys = Object.keys(currentEntry).filter((key) => key == KEY_PROPERTY || key in emptyGroup);
             const cleanedUpEntry = availableKeys.reduce((cur, keyname) => {
