@@ -9,18 +9,18 @@
   },
   "devDependencies": {
     "@formkit/auto-animate": "^0.9.0",
-    "@neos-project/neos-ui-extensibility": "^8.4.0",
-    "@neos-project/positional-array-sorter": "^8.4.0",
+    "@neos-project/neos-ui-extensibility": "^8.4.3",
+    "@neos-project/positional-array-sorter": "^8.4.3",
     "array-move": "^4.0.0",
     "carbon-neos-loadinganimation": "^1.2.0",
     "clsx": "^2.1.1",
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.28.0",
     "esbuild-plugin-lightningcss-modules": "^0.1.2",
-    "nanoid": "^5.1.6",
-    "prettier": "^3.7.4",
+    "nanoid": "^5.1.11",
+    "prettier": "^3.8.3",
     "prop-types": "^15.8.1",
     "react-sortable-hoc": "^2.0.0",
-    "use-debounce": "^10.1.0"
+    "use-debounce": "^10.1.1"
   },
-  "packageManager": "pnpm@10.28.0+sha512.05df71d1421f21399e053fde567cea34d446fa02c76571441bfc1c7956e98e363088982d940465fd34480d4d90a0668bc12362f8aa88000a64e83d0b0e47be48"
+  "packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1"
 }
