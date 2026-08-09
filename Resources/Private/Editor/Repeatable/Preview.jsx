@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import clsx from "clsx";
 import backend from "@neos-project/neos-ui-backend-connector";
 import style from "./style.module.css";
 
 let loadImageMetadata = null;
 
-export default function Preview({ text, image }) {
+export default function Preview({ text, image, backgroundColor }) {
     const [src, setSrc] = useState();
     const [thumbnailStyles, setThumbnailStyles] = useState({});
     const [cropAreaStyles, setCropAreaStyles] = useState({});
@@ -47,10 +48,11 @@ export default function Preview({ text, image }) {
     }, [image]);
 
     const cleanText = cleanHtml(text || "");
+    const cleanBackgroundColor = cleanHtml(backgroundColor || null);
 
     if (src) {
         return (
-            <div className={style.preview}>
+            <div className={style.preview} style={{ backgroundColor: cleanBackgroundColor }}>
                 <figure style={cropAreaStyles}>
                     <img src={src} style={thumbnailStyles} title={cleanText} />
                 </figure>
@@ -59,7 +61,22 @@ export default function Preview({ text, image }) {
     }
 
     if (cleanText) {
-        return <span className={style.label}>{cleanText}</span>;
+        return (
+            <span
+                className={clsx(style.label, cleanBackgroundColor && style.backgroundColor)}
+                style={{ backgroundColor: cleanBackgroundColor }}
+            >
+                {cleanText}
+            </span>
+        );
+    }
+
+    if (cleanBackgroundColor) {
+        return (
+            <span className={style.label} style={{ backgroundColor: cleanBackgroundColor }}>
+                &nbsp;
+            </span>
+        );
     }
 
     return null;

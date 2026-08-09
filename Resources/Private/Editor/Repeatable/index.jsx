@@ -305,7 +305,9 @@ function Repeatable({
     function getPreview(idx) {
         let text = options?.preview?.text;
         let image = options?.preview?.image;
-        if (!text && !image) {
+        let backgroundColor = options?.preview?.backgroundColor;
+
+        if (!text && !image && !backgroundColor) {
             return null;
         }
         if (text) {
@@ -314,7 +316,16 @@ function Repeatable({
         if (image) {
             image = ItemEvalRecursive(image, currentValue[idx], props.node, props.parentNode, props.documentNode);
         }
-        return <Preview text={i18nRegistry.translate(text)} image={image} />;
+        if (backgroundColor) {
+            backgroundColor = ItemEvalRecursive(
+                backgroundColor,
+                currentValue[idx],
+                props.node,
+                props.parentNode,
+                props.documentNode,
+            );
+        }
+        return <Preview text={i18nRegistry.translate(text)} image={image} backgroundColor={backgroundColor} />;
     }
 
     function getProperty(property, idx) {
