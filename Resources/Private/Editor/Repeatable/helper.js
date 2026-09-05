@@ -257,7 +257,7 @@ export function addKeyToValue(value, KEY_PROPERTY) {
         return [];
     }
     let newValue = clone(value);
-    // add an fixed index to the value
+    // add a fixed index to the value
     newValue = newValue.map((item) => {
         if (item[KEY_PROPERTY]) {
             return item;
@@ -276,4 +276,23 @@ export function checkIfValueIsSet(value) {
 
 export function returnValueIfSet(value, fallback = "") {
     return checkIfValueIsSet(value) ? value : fallback;
+}
+
+export function cleanupProperties(options) {
+    const result = {};
+    // This cleans up properties who have no definition or an empty definition object
+    // This can happen if you use a mixin and want to remove certain properties
+    const properties = options?.properties || {};
+    for (const key in properties) {
+        if (!Object.hasOwn(properties, key)) {
+            continue;
+        }
+
+        const definition = properties[key];
+        if (!definition || Object.keys(definition).length === 0) {
+            continue;
+        }
+        result[key] = definition;
+    }
+    return result;
 }

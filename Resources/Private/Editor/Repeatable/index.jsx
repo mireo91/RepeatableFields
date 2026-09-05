@@ -14,6 +14,7 @@ import Preview from "./Preview";
 import {
     addKeyToValue,
     checkIfValueIsSet,
+    cleanupProperties,
     ClientEvalIsNotFinished,
     clone,
     deepMerge,
@@ -120,7 +121,7 @@ function Repeatable({
         if (!options || ClientEvalIsNotFinished(options)) {
             return;
         }
-        const emptyGroup = getEmptyGroup(options?.properties);
+        const emptyGroup = getEmptyGroup(cleanupProperties(options));
         const newValue = getInitialValue({ emptyGroup, value, KEY_PROPERTY, options });
         setEmptyGroup(emptyGroup);
         setCurrentValue(newValue);
@@ -223,7 +224,8 @@ function Repeatable({
 
     function createElement(idx) {
         const isPredefined = options?.predefinedProperties?.[idx];
-        const { controls, sortBy, properties, allowRemovePredefinedProperties } = options;
+        const { controls, sortBy, allowRemovePredefinedProperties } = options;
+        const properties = cleanupProperties(options);
 
         const hasRemove = controls.remove && allowRemove ? !isPredefined || allowRemovePredefinedProperties : false;
 
@@ -330,7 +332,8 @@ function Repeatable({
 
     function getProperty(property, idx) {
         const repeatableValue = clone(currentValue);
-        const { properties, predefinedProperties } = options;
+        const { predefinedProperties } = options;
+        const properties = cleanupProperties(options);
         let propertyDefinition = ItemEvalRecursive(
             properties[property],
             repeatableValue[idx],
