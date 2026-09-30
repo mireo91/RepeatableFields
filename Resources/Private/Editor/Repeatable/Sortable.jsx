@@ -63,6 +63,7 @@ export function Sortable({ onChange, value, element, items, enable, automaticSor
             manualSort={manualSort}
             onSortEnd={onSortEnd}
             automaticSorting={automaticSorting}
+            helperClass={style.sortableHelper}
             useDragHandle
             axis="y"
             lockAxis="y"

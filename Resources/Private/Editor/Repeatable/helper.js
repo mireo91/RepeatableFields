@@ -1,6 +1,16 @@
+import positionalArraySorter from "@neos-project/positional-array-sorter";
+import { nanoid } from "nanoid";
+
 export function set(path, value, object) {
     path = getPath(path);
     return recursivelySetValueInObject(object, value, path);
+}
+
+export function removeKeyPropertyFromObject(array, KEY_PROPERTY) {
+    return clone(array).map((item) => {
+        delete item[KEY_PROPERTY];
+        return item;
+    });
 }
 
 export const clone = (input) => JSON.parse(JSON.stringify(input));
@@ -165,7 +175,7 @@ function recursivelySetValueInObject(object, value, path) {
 
     if (Array.isArray(object)) {
         //
-        // Make sure, that array elements are always inserted at the last position, if the path exceeds the length
+        // Make sure that array elements are always inserted at the last position, if the path exceeds the length
         // of the array
         //
         if (typeof path[0] === "number" && object.length < path[0]) {
@@ -179,4 +189,110 @@ function recursivelySetValueInObject(object, value, path) {
     }
 
     return Object.assign({}, object, { [path[0]]: recursivelySetValueInObject(object[path[0]], value, path.slice(1)) });
+}
+
+export function getInitialValue({ emptyGroup, value, KEY_PROPERTY, options }) {
+    // add a fixed index to the value
+    let result = addKeyToValue(value, KEY_PROPERTY);
+    const { min, max } = options;
+
+    if (min) {
+        if (result.length < min) {
+            for (var i = 0; i < min; ++i) {
+                if (result[i]) {
+                    result[i] = value[i];
+                } else {
+                    result[i] = emptyGroup;
+                }
+            }
+        }
+    }
+    if (max && result.length > max) {
+        result = result.slice(0, max);
+    }
+
+    if (result.length) {
+        for (let key = 0; key < result.length; key++) {
+            const predefined = options?.predefinedProperties?.[key]?.properties;
+            const currentEntry = clone(result[key]);
+            const availableKeys = Object.keys(currentEntry).filter((key) => key == KEY_PROPERTY || key in emptyGroup);
+            const cleanedUpEntry = availableKeys.reduce((cur, keyname) => {
+                const isPredefined = predefined?.[keyname]?.defaultValue != undefined;
+                let value = isPredefined ? predefined[keyname].defaultValue : currentEntry[keyname];
+                if (isNumeric(value)) {
+                    value = parseFloat(value);
+                }
+
+                return {
+                    ...cur,
+                    [keyname]: value,
+                };
+            }, {});
+            result[key] = cleanedUpEntry;
+        }
+    }
+    return result;
+}
+
+export function getEmptyGroup(properties) {
+    if (!properties) {
+        return {};
+    }
+    const group = {};
+    // Create array to enable sorting
+    const array = [];
+    for (const key in properties) {
+        const item = properties[key];
+        array.push({ key, position: item?.position ?? null, item });
+    }
+    positionalArraySorter(array).forEach(({ key, item }) => {
+        const defaultValue = item && item.defaultValue;
+        group[key] = returnValueIfSet(defaultValue, "");
+    });
+    return group;
+}
+
+export function addKeyToValue(value, KEY_PROPERTY) {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+    let newValue = clone(value);
+    // add a fixed index to the value
+    newValue = newValue.map((item) => {
+        if (item[KEY_PROPERTY]) {
+            return item;
+        }
+        return {
+            ...item,
+            [KEY_PROPERTY]: nanoid(),
+        };
+    });
+    return newValue;
+}
+
+export function checkIfValueIsSet(value) {
+    return !!(value !== null && value !== undefined);
+}
+
+export function returnValueIfSet(value, fallback = "") {
+    return checkIfValueIsSet(value) ? value : fallback;
+}
+
+export function cleanupProperties(options) {
+    const result = {};
+    // This cleans up properties who have no definition or an empty definition object
+    // This can happen if you use a mixin and want to remove certain properties
+    const properties = options?.properties || {};
+    for (const key in properties) {
+        if (!Object.hasOwn(properties, key)) {
+            continue;
+        }
+
+        const definition = properties[key];
+        if (!definition || Object.keys(definition).length === 0) {
+            continue;
+        }
+        result[key] = definition;
+    }
+    return result;
 }

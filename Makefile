@@ -27,7 +27,6 @@ build:
 
 ## Upgrade dependencies
 upgrade:
-	corepack use pnpm@latest
 	pnpm up --latest --interactive
 	pnpm upgrade
 

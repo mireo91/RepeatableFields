@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { nanoid } from "nanoid";
 import clsx from "clsx";
+import { useDebouncedCallback } from "use-debounce";
 import { selectors } from "@neos-project/neos-ui-redux-store";
 import { neos } from "@neos-project/neos-ui-decorators";
 import { IconButton, Button, Label } from "@neos-project/react-ui-components";
 import backend from "@neos-project/neos-ui-backend-connector";
-import positionalArraySorter from "@neos-project/positional-array-sorter";
 import Loading from "carbon-neos-loadinganimation/LoadingWithStyles";
 import { Sortable, DragHandle } from "./Sortable";
 import Envelope from "./Envelope";
 import Preview from "./Preview";
 import {
-    deepMerge,
-    set,
-    isNumeric,
-    dynamicSort,
-    clone,
-    isSame,
+    addKeyToValue,
+    checkIfValueIsSet,
+    cleanupProperties,
     ClientEvalIsNotFinished,
+    clone,
+    deepMerge,
+    dynamicSort,
+    getEmptyGroup,
+    getInitialValue,
+    isNumeric,
+    isSame,
     ItemEvalRecursive,
+    removeKeyPropertyFromObject,
+    returnValueIfSet,
+    set,
 } from "./helper";
 import style from "./style.module.css";
 
@@ -28,10 +34,10 @@ const KEY_PROPERTY = "_UUID_";
 
 const getDataLoaderOptionsForProps = (props) => ({
     contextNodePath: props.focusedNodePath,
-    dataSourceIdentifier: props.options.dataSourceIdentifier,
-    dataSourceUri: props.options.dataSourceUri,
-    dataSourceAdditionalData: props.options.dataSourceAdditionalData,
-    dataSourceDisableCaching: Boolean(props.options.dataSourceDisableCaching),
+    dataSourceIdentifier: props.options?.dataSourceIdentifier,
+    dataSourceUri: props.options?.dataSourceUri,
+    dataSourceAdditionalData: props.options?.dataSourceAdditionalData,
+    dataSourceDisableCaching: Boolean(props.options?.dataSourceDisableCaching),
 });
 
 function Repeatable({
@@ -61,7 +67,7 @@ function Repeatable({
 
     // We use this hack to prevent the editor from re-rendering all the time, even if the options are the same.
     const returnCurrentValueAsJSON = () => JSON.stringify(currentValue);
-    const [currentValueAsJSON, setCurrentValueAsJSON] = useState([]);
+    const [currentValueAsJSON, setCurrentValueAsJSON] = useState("[]");
 
     useEffect(() => {
         setLoading(true);
@@ -82,22 +88,43 @@ function Repeatable({
         setCurrentValueAsJSON(dataAsJSON);
         testIfAdd(currentValue);
         testIfRemove(currentValue);
-        if (options.sortBy) {
+        if (options?.sortBy) {
             const timeout = setTimeout(() => {
-                const sorted = dynamicSort(currentValue, options.sortBy);
+                const sorted = dynamicSort(currentValue, options?.sortBy);
                 handleValueChange(sorted);
             }, 2000);
             return () => clearTimeout(timeout);
         }
     }, [currentValue]);
 
+    const updateCurrentValue = (value) => {
+        const commitValue = removeKeyPropertyFromObject(currentValue, KEY_PROPERTY);
+        if (isSame(value, commitValue)) {
+            return;
+        }
+        setCurrentValue(addKeyToValue(value, KEY_PROPERTY));
+    };
+
+    const debouncedValueChange = useDebouncedCallback((value) => {
+        updateCurrentValue(value);
+    }, 1000);
+
+    useEffect(() => {
+        if (options?.sortBy) {
+            debouncedValueChange(value);
+            return;
+        }
+        updateCurrentValue(value);
+    }, [value]);
+
     useEffect(() => {
         if (!options || ClientEvalIsNotFinished(options)) {
             return;
         }
-        const group = getEmptyGroup();
-        setEmptyGroup(group);
-        initialValue(group);
+        const emptyGroup = getEmptyGroup(cleanupProperties(options));
+        const newValue = getInitialValue({ emptyGroup, value, KEY_PROPERTY, options });
+        setEmptyGroup(emptyGroup);
+        setCurrentValue(newValue);
     }, [options, dataTypes]);
 
     // We use this hack to prevent the editor from re-rendering all the time, even if the options are the same.
@@ -121,76 +148,6 @@ function Repeatable({
         });
     }, [dataSourceIdentifier, dataSourceUri, dataSourceAdditionalData]);
 
-    function getEmptyGroup() {
-        let group = {};
-        const properties = options.properties;
-        if (properties) {
-            // Create array to enable sorting
-            const array = [];
-            for (const key in properties) {
-                const item = properties[key];
-                array.push({ key, position: item?.position ?? null, item });
-            }
-            positionalArraySorter(array).forEach(({ key, item }) => {
-                const defaultValue = item && item.defaultValue;
-                group[key] = returnValueIfSet(defaultValue, "");
-            });
-        }
-        return group;
-    }
-
-    function initialValue(group) {
-        let newValue = value ? clone(value) : [];
-        // add an fixed index to the value
-        newValue = newValue.map((item) => {
-            if (item[KEY_PROPERTY]) {
-                return item;
-            }
-            return {
-                ...item,
-                [KEY_PROPERTY]: nanoid(),
-            };
-        });
-        const { min, max } = options;
-
-        if (min) {
-            if (newValue.length < min) {
-                for (var i = 0; i < min; ++i) {
-                    if (newValue[i]) {
-                        newValue[i] = value[i];
-                    } else {
-                        newValue[i] = group;
-                    }
-                }
-            }
-        }
-        if (max && newValue.length > max) {
-            newValue = newValue.slice(0, max);
-        }
-
-        if (newValue.length) {
-            for (let key = 0; key < newValue.length; key++) {
-                const predefined = options.predefinedProperties?.[key]?.properties;
-                const currentEntry = clone(newValue[key]);
-                const availableKeys = Object.keys(currentEntry).filter((key) => key == KEY_PROPERTY || key in group);
-                const cleanedUpEntry = availableKeys.reduce((cur, keyname) => {
-                    const isPredefined = predefined?.[keyname]?.defaultValue != undefined;
-                    let value = isPredefined ? predefined[keyname].defaultValue : currentEntry[keyname];
-                    if (isNumeric(value)) {
-                        value = parseFloat(value);
-                    }
-
-                    return {
-                        ...cur,
-                        [keyname]: value,
-                    };
-                }, {});
-                newValue[key] = cleanedUpEntry;
-            }
-        }
-        setCurrentValue(newValue);
-    }
-
     function handleValueChange(inputValue) {
         // Nothing changed, do nothing
         if (isSame(inputValue, currentValue)) {
@@ -198,10 +155,7 @@ function Repeatable({
         }
 
         // Remove the KEY_PROPERTY from the inputValue
-        const commitValue = clone(inputValue).map((item) => {
-            delete item[KEY_PROPERTY];
-            return item;
-        });
+        const commitValue = removeKeyPropertyFromObject(inputValue, KEY_PROPERTY);
 
         // If the value is the same as the commitValue, don't commit
         if (!isSame(commitValue, value)) {
@@ -211,13 +165,13 @@ function Repeatable({
     }
 
     function testIfAdd(value) {
-        if (options && options.max) {
+        if (options?.max) {
             setAllowAdd(options.max > value.length);
         }
     }
 
     function testIfRemove(value) {
-        if (options && options.min) {
+        if (options?.min) {
             setAllowRemove(options.min < value.length);
         }
     }
@@ -246,34 +200,32 @@ function Repeatable({
         handleValueChange(set(property, event, currentValue));
     }
 
-    function validateElement(elementValue, elementConfiguration, idx, identifier) {
-        if (!elementConfiguration || !elementConfiguration.validation) {
+    function validateElement({ value, propertyDefinition, idx }) {
+        const validators = propertyDefinition?.validation;
+        if (!validators) {
             return;
         }
-        const validators = elementConfiguration.validation;
-        const validationResults = Object.keys(validators).map((validatorName) => {
-            const validatorConfiguration = validators[validatorName];
-            return checkValidator(elementValue, validatorName, validatorConfiguration);
-        });
-        const validationResultsArray = validationResults.filter((result) => result);
-        if (options.controls && options.controls.add) {
+        const validationResultsArray = Object.keys(validators)
+            .map((validatorName) => {
+                const validatorConfiguration = validators[validatorName];
+                const validator = validatorRegistry.get(validatorName);
+                if (validator) {
+                    return validator(value, validatorConfiguration);
+                }
+                console.warn(`Validator ${validatorName} not found`);
+            })
+            .filter((result) => result);
+        if (options?.controls?.add) {
             const allowed = options?.max ? options.max > currentValue.length : true;
             setAllowAdd(allowed && validationResultsArray.length <= 0);
         }
         return validationResultsArray;
     }
 
-    function checkValidator(elementValue, validatorName, validatorConfiguration) {
-        const validator = validatorRegistry.get(validatorName);
-        if (validator) {
-            return validator(elementValue, validatorConfiguration);
-        }
-        console.warn(`Validator ${validatorName} not found`);
-    }
-
     function createElement(idx) {
-        const isPredefined = !!options.predefinedProperties && options.predefinedProperties[idx];
-        const { controls, sortBy, properties, allowRemovePredefinedProperties } = options;
+        const isPredefined = options?.predefinedProperties?.[idx];
+        const { controls, sortBy, allowRemovePredefinedProperties } = options;
+        const properties = cleanupProperties(options);
 
         const hasRemove = controls.remove && allowRemove ? !isPredefined || allowRemovePredefinedProperties : false;
 
@@ -352,18 +304,12 @@ function Repeatable({
         );
     }
 
-    function checkIfValueIsSet(value) {
-        return !!(value !== null && value !== undefined);
-    }
-
-    function returnValueIfSet(value, fallback = "") {
-        return checkIfValueIsSet(value) ? value : fallback;
-    }
-
     function getPreview(idx) {
         let text = options?.preview?.text;
         let image = options?.preview?.image;
-        if (!text && !image) {
+        let backgroundColor = options?.preview?.backgroundColor;
+
+        if (!text && !image && !backgroundColor) {
             return null;
         }
         if (text) {
@@ -372,12 +318,22 @@ function Repeatable({
         if (image) {
             image = ItemEvalRecursive(image, currentValue[idx], props.node, props.parentNode, props.documentNode);
         }
-        return <Preview text={i18nRegistry.translate(text)} image={image} />;
+        if (backgroundColor) {
+            backgroundColor = ItemEvalRecursive(
+                backgroundColor,
+                currentValue[idx],
+                props.node,
+                props.parentNode,
+                props.documentNode,
+            );
+        }
+        return <Preview text={i18nRegistry.translate(text)} image={image} backgroundColor={backgroundColor} />;
     }
 
     function getProperty(property, idx) {
         const repeatableValue = clone(currentValue);
-        const { properties, predefinedProperties } = options;
+        const { predefinedProperties } = options;
+        const properties = cleanupProperties(options);
         let propertyDefinition = ItemEvalRecursive(
             properties[property],
             repeatableValue[idx],
@@ -409,7 +365,7 @@ function Repeatable({
 
         if (editorOptions.hasOwnProperty("dataSourceUri") || editorOptions.hasOwnProperty("dataSourceIdentifier")) {
             editorOptions = { ...editorOptions };
-            if (!editorOptions.dataSourceAdditionalData) {
+            if (!editorOptions?.dataSourceAdditionalData) {
                 editorOptions.dataSourceAdditionalData = {};
             } else {
                 if (editorOptions.dataSourceAdditionalData.hasOwnProperty("repeatableIndex")) {
@@ -432,7 +388,7 @@ function Repeatable({
                     editor={editor}
                     editorRegistry={editorRegistry}
                     i18nRegistry={i18nRegistry}
-                    validationErrors={validateElement(value, propertyDefinition, idx, property)}
+                    validationErrors={validateElement({ value, propertyDefinition, idx })}
                     highlight={false}
                     property={`${idx}.${property}`}
                     id={`repeatable-${idx}-${property}`}
@@ -474,12 +430,12 @@ function Repeatable({
                 element={createElement}
                 items={currentValue}
                 onChange={handleValueChange}
-                enable={options.controls?.move}
-                automaticSorting={options.sortBy}
+                enable={options?.controls?.move}
+                automaticSorting={options?.sortBy}
                 value={currentValue}
                 KEY_PROPERTY={KEY_PROPERTY}
             />
-            {options.controls.add && allowAdd && (
+            {options?.controls?.add && allowAdd && (
                 <>
                     <Button onClick={handleAdd} id={id}>
                         {i18nRegistry.translate(buttonAddLabel)}
