@@ -16,7 +16,7 @@
     "clsx": "^2.1.1",
     "esbuild": "^0.27.2",
     "esbuild-plugin-lightningcss-modules": "^0.1.2",
-    "nanoid": "^5.1.6",
+    "nanoid": "^5.1.16",
     "prettier": "^3.7.4",
     "prop-types": "^15.8.1",
     "react-sortable-hoc": "^2.0.0"
